@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160">
+  <line x1="60" y1="60" x2="60" y2="150" stroke="#5B8C3E" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="42" cy="100" rx="18" ry="6" fill="#7CB342" transform="rotate(-30 42 100)"/>
+  <ellipse cx="78" cy="110" rx="18" ry="6" fill="#7CB342" transform="rotate(25 78 110)"/>
+  <ellipse cx="48" cy="42" rx="14" ry="28" fill="#FF8BA7" transform="rotate(-15 48 42)"/>
+  <ellipse cx="72" cy="42" rx="14" ry="28" fill="#FF8BA7" transform="rotate(15 72 42)"/>
+  <ellipse cx="60" cy="38" rx="14" ry="28" fill="#FFB3C6"/>
+  <circle cx="60" cy="46" r="4" fill="#FFD166"/>
+</svg>

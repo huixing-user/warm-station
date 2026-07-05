@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>华仔の温暖小站 💕</title>
+<style>
+/* ===== CSS Reset & Variables ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --pink: #F9D0C3;
+  --cream: #F5E6D3;
+  --gold: #F0E6D8;
+  --deep-pink: #E8A0B4;
+  --brown: #8B6F5E;
+  --dark: #4A3728;
+  --white: #FFFBF7;
+  --card-shadow: 0 4px 20px rgba(139, 111, 94, 0.12);
+  --radius: 20px;
+  --font-main: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font-main);
+  background: linear-gradient(180deg, #FDF2EC 0%, var(--cream) 30%, #FDF2EC 60%, var(--pink) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: var(--dark);
+  display: flex;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  overflow-x: hidden;
+}
+
+#app {
+  width: 100%;
+  max-width: 480px;
+  padding: 0 20px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== Hero 区 ===== */
+.hero {
+  text-align: center;
+  padding: 36px 20px 20px;
+  position: relative;
+}
+
+.hero-hearts {
+  font-size: 1.3rem;
+  margin-bottom: 4px;
+  letter-spacing: 6px;
+  animation: floatHearts 3s ease-in-out infinite;
+}
+
+@keyframes floatHearts {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.hero-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--brown);
+  letter-spacing: 2px;
+  font-family: "Georgia", "STSong", "Songti SC", serif;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.hero-subtitle {
+  font-size: 0.95rem;
+  color: #A0897B;
+  margin-top: 8px;
+  font-style: italic;
+  min-height: 24px;
+  transition: opacity 0.5s;
+}
+
+/* ===== Section 通用样式 ===== */
+.section {
+  margin: 16px 0;
+  padding: 24px 20px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+}
+
+.section-title {
+  text-align: center;
+  font-size: 1.05rem;
+  color: var(--brown);
+  margin-bottom: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* ===== 弹窗/Modal 通用 ===== */
+.modal-overlay {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-box {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  max-width: 340px; width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  animation: modalIn 0.3s ease-out;
+}
+
+@keyframes modalIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-close {
+  margin-top: 14px;
+  padding: 10px 32px;
+  border: none; border-radius: 25px;
+  background: var(--deep-pink);
+  color: white; font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.modal-close:active { transform: scale(0.95); }
+
+/* ===== 粒子容器 ===== */
+.particles-container {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none; z-index: 999;
+}
+
+/* ===== 飘落花瓣 ===== */
+.petal {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  animation: petalFall linear forwards;
+}
+
+@keyframes petalFall {
+  0%   { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0.7; }
+  25%  { transform: translateY(25vh) rotate(90deg) translateX(35px); }
+  50%  { transform: translateY(50vh) rotate(180deg) translateX(-25px); }
+  75%  { transform: translateY(75vh) rotate(270deg) translateX(30px); opacity: 0.3; }
+  100% { transform: translateY(105vh) rotate(360deg) translateX(-15px); opacity: 0; }
+}
+
+/* ===== Toast ===== */
+.toast-msg {
+  position: fixed; top: 18%; left: 50%; transform: translateX(-50%);
+  background: rgba(74, 55, 40, 0.92); color: #FFFBF7; padding: 14px 28px;
+  border-radius: 30px; font-size: 1rem; z-index: 2000;
+  animation: toastIn 0.4s ease-out, toastOut 0.4s 2.2s ease-in forwards;
+  pointer-events: none; text-align: center; max-width: 90vw;
+  font-family: var(--font-main);
+  letter-spacing: 0.5px;
+}
+@keyframes toastIn  { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+@keyframes particleUp {
+  0%   { opacity: 1; transform: translateY(0) translateX(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-80px) translateX(var(--dx, 20px)) scale(0.3); }
+}
+
+/* ===== 木鱼区 ===== */
+.muyu-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 6px;
+}
+
+.muyu-stand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.muyu-cushion {
+  width: 160px; height: 26px;
+  background: radial-gradient(ellipse at center, #D4A98A 0%, #9B6B4A 100%);
+  border-radius: 50%;
+  margin-bottom: -10px;
+  z-index: 1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.muyu-body {
+  width: 130px; height: 130px;
+  background: radial-gradient(circle at 45% 40%, #E0B878 0%, #C4854A 35%, #9B5F35 100%);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 8px 30px rgba(139, 87, 48, 0.35), inset 0 -5px 10px rgba(0,0,0,0.15), inset 0 3px 6px rgba(255,255,255,0.1);
+  transition: transform 0.1s ease-out;
+  z-index: 2;
+}
+
+.muyu-body:active,
+.muyu-body.pressed {
+  transform: scale(0.91) translateY(8px);
+  box-shadow: 0 2px 8px rgba(139, 87, 48, 0.3), inset 0 -2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.06s ease-out;
+}
+
+.muyu-groove {
+  position: absolute;
+  top: 20px; left: 50%;
+  transform: translateX(-50%);
+  width: 54px; height: 6px;
+  background: rgba(0,0,0,0.18);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(255,255,255,0.15);
+}
+
+.muyu-fish {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 38px; height: 26px;
+  background: rgba(0,0,0,0.07);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.muyu-fish::after {
+  content: '🐟';
+  font-size: 14px;
+  opacity: 0.45;
+}
+
+.muyu-amount {
+  text-align: center;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--brown);
+  margin-top: 14px;
+  font-family: "Georgia", "STSong", "Songti SC", serif;
+  transition: transform 0.15s ease-out;
+}
+
+.muyu-amount.bump {
+  animation: amountBump 0.35s ease-out;
+}
+
+@keyframes amountBump {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.25); color: var(--deep-pink); }
+  100% { transform: scale(1); }
+}
+
+.muyu-hint {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #C0A894;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* ===== 转盘 ===== */
+.wheel-wrapper {
+  position: relative;
+  width: 300px; height: 300px;
+  margin: 0 auto;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: -12px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.8rem;
+  color: #E8486B;
+  z-index: 10;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  animation: pointerBounce 1s ease-in-out infinite;
+}
+
+@keyframes pointerBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(5px); }
+}
+
+#wheelCanvas {
+  display: block;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+}
+
+.wheel-btn {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 66px; height: 66px;
+  border-radius: 50%;
+  border: 4px solid var(--white);
+  background: linear-gradient(135deg, #FF6B8A, #E8486B);
+  color: white;
+  font-size: 1.35rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(232, 72, 107, 0.4);
+  z-index: 5;
+  transition: transform 0.1s;
+  letter-spacing: 1px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wheel-btn:active {
+  transform: translate(-50%, -50%) scale(0.88);
+}
+
+.wheel-btn:disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.wheel-counter {
+  text-align: center;
+  color: #B0A090;
+  font-size: 0.85rem;
+  margin-top: 12px;
+}
+
+/* ===== 照片墙 ===== */
+.photo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.photo-card {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 3px 14px rgba(139, 111, 94, 0.1);
+  background: var(--white);
+  transition: transform 0.2s;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.photo-card:active {
+  transform: scale(0.95);
+}
+
+.photo-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-caption {
+  padding: 8px 10px;
+  font-size: 0.76rem;
+  color: #A0897B;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#photoOverlay { cursor: pointer; }
+
+/* ===== 暖心话语 ===== */
+.quote-card {
+  text-align: center;
+  padding: 22px 18px;
+  background: linear-gradient(135deg, #FFF7F2 0%, #FFEFE6 100%);
+  border-radius: 14px;
+  border: 1px solid rgba(232, 160, 180, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.quote-card:active {
+  transform: scale(0.96);
+}
+
+.quote-text {
+  font-size: 1.08rem;
+  color: var(--brown);
+  line-height: 1.8;
+  font-family: "Georgia", "STSong", "Songti SC", serif;
+  transition: opacity 0.3s;
+}
+
+.quote-text.fade { opacity: 0; }
+
+.quote-hint {
+  font-size: 0.72rem;
+  color: #C8B4A4;
+  margin-top: 10px;
+}
+
+/* ===== 管理面板 ===== */
+.admin-overlay {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+.admin-overlay.active { display: flex; }
+
+.admin-panel {
+  background: var(--white);
+  border-radius: var(--radius);
+  width: 92%;
+  max-width: 440px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+  animation: modalIn 0.3s ease-out;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #F0E6D8;
+  position: sticky; top: 0;
+  background: var(--white);
+  z-index: 1;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.admin-header h2 {
+  font-size: 1.1rem;
+  color: var(--brown);
+}
+
+.admin-close {
+  background: none; border: none;
+  font-size: 1.4rem; color: #A0897B;
+  cursor: pointer; padding: 4px 10px;
+  border-radius: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.admin-body {
+  padding: 16px 20px 24px;
+}
+
+.admin-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #F5E6D3;
+  font-size: 0.88rem;
+}
+
+.admin-stat-label { color: #A0897B; }
+.admin-stat-value { color: var(--brown); font-weight: 600; }
+
+.admin-section-title {
+  font-size: 0.95rem;
+  color: var(--brown);
+  font-weight: 600;
+  margin: 18px 0 8px;
+}
+
+.admin-records {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 0.8rem;
+}
+
+.admin-record {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #F5E6D3;
+  color: #A0897B;
+}
+
+.admin-record-prize { color: var(--brown); font-weight: 500; }
+
+.admin-btn {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 11px;
+  border: none; border-radius: 20px;
+  font-size: 0.9rem; font-family: var(--font-main);
+  cursor: pointer;
+  transition: transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.admin-btn:active { transform: scale(0.97); }
+
+.admin-btn-danger { background: #FFE8E8; color: #C0392B; }
+.admin-btn-info  { background: #EAF0FB; color: #2C5282; }
+
+#pwdInput:focus { border-color: var(--deep-pink); }
+</style>
+</head>
+<body>
+
+<div class="particles-container" id="particlesContainer"></div>
+
+<div id="app">
+
+  <!-- ===== Hero 标题区 ===== -->
+  <section class="hero" id="heroSection">
+    <div class="hero-hearts">🌸 💕 🌸</div>
+    <h1 class="hero-title" id="heroTitle">华仔の温暖小站</h1>
+    <p class="hero-subtitle" id="heroSubtitle">今天也是被爱的一天 ✨</p>
+  </section>
+
+  <!-- ===== 木鱼敲击区 ===== -->
+  <section class="section muyu-section" id="muyuSection">
+    <div class="section-title">🪵 敲敲木鱼 · 烦恼飞走</div>
+    <div class="muyu-container" id="muyuContainer">
+      <div class="muyu-stand" id="muyuStand">
+        <div class="muyu-cushion"></div>
+        <div class="muyu-body" id="muyuBody">
+          <div class="muyu-groove"></div>
+          <div class="muyu-fish"></div>
+        </div>
+      </div>
+    </div>
+    <div class="muyu-amount" id="muyuAmount">¥0.0</div>
+    <div class="muyu-hint">👆 敲一敲，每下都有小奖励哦～</div>
+  </section>
+
+  <!-- ===== 幸运大转盘 ===== -->
+  <section class="section wheel-section" id="wheelSection">
+    <div class="section-title">🎡 幸运大转盘</div>
+    <div class="wheel-wrapper">
+      <div class="wheel-pointer">▼</div>
+      <canvas id="wheelCanvas" width="300" height="300"></canvas>
+      <button class="wheel-btn" id="wheelBtn">抽</button>
+    </div>
+    <div class="wheel-counter" id="wheelCounter">已转 0 次</div>
+  </section>
+
+  <!-- ===== 照片墙 ===== -->
+  <section class="section photo-section" id="photoSection">
+    <div class="section-title">🖼️ 我们的美好时光</div>
+    <div class="photo-grid" id="photoGrid"></div>
+  </section>
+
+  <!-- ===== 暖心话语 ===== -->
+  <section class="section quote-section" id="quoteSection">
+    <div class="section-title">📝 华仔想对你说</div>
+    <div class="quote-card" id="quoteCard">
+      <div class="quote-text" id="quoteText"></div>
+      <div class="quote-hint">👆 点击换一句</div>
+    </div>
+  </section>
+
+</div><!-- /#app -->
+
+<!-- ===== 结果弹窗 ===== -->
+<div class="modal-overlay" id="resultOverlay">
+  <div class="modal-box">
+    <div id="resultContent"></div>
+    <button class="modal-close" id="resultCloseBtn">好的 👌</button>
+  </div>
+</div>
+
+<!-- ===== 照片放大弹窗 ===== -->
+<div class="modal-overlay" id="photoOverlay">
+  <img id="photoLarge" style="max-width:92vw;max-height:80vh;border-radius:14px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,0.3);" alt="放大照片" />
+</div>
+
+<!-- ===== 管理面板 ===== -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <h2>🔒 管理面板</h2>
+      <button class="admin-close" id="adminClose">✕</button>
+    </div>
+    <div class="admin-body" id="adminBody"></div>
+  </div>
+</div>
+
+<!-- ===== 密码输入弹窗 ===== -->
+<div class="modal-overlay" id="pwdOverlay">
+  <div class="modal-box">
+    <div style="font-size:1.3rem;margin-bottom:14px;color:var(--brown);">🔐 验证身份</div>
+    <input type="password" id="pwdInput" placeholder="请输入密码" style="width:100%;padding:12px 16px;border:2px solid var(--pink);border-radius:25px;font-size:1rem;text-align:center;outline:none;margin-bottom:14px;font-family:var(--font-main);">
+    <div>
+      <button class="modal-close" id="pwdCancel" style="background:#C0B0A0;">取消</button>
+      <button class="modal-close" id="pwdConfirm" style="margin-left:8px;background:var(--brown);">确认</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ======================================================================
+//  华仔の温暖小站 — 核心逻辑
+// ======================================================================
+
+const WA = {
+  PASSWORD: 'HhxloveCwh1314!',
+
+  // ---- localStorage 工具 ----
+  store: {
+    get(key, fallback) {
+      try { const v = localStorage.getItem('warm_' + key); return v !== null ? JSON.parse(v) : fallback; }
+      catch(e) { return fallback; }
+    },
+    set(key, val) {
+      try { localStorage.setItem('warm_' + key, JSON.stringify(val)); } catch(e) {}
+    }
+  },
+
+  // ---- 初始化数据 ----
+  init() {
+    if (this.store.get('muyu_count', null) === null)  this.store.set('muyu_count', 0);
+    if (this.store.get('muyu_total', null) === null)  this.store.set('muyu_total', 0);
+    if (this.store.get('wheel_count', null) === null) this.store.set('wheel_count', 0);
+    if (this.store.get('wheel_records', null) === null) this.store.set('wheel_records', []);
+    if (this.store.get('wheel_milestones', null) === null) {
+      this.store.set('wheel_milestones', { m52: false, m520: false, m1314: false });
+    }
+  },
+
+  // ---- 工具函数 ----
+  fmtMoney(count) { return (count * 0.1).toFixed(1); },
+
+  spawnParticles(x, y, text, count) {
+    const container = document.getElementById('particlesContainer');
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.textContent = text;
+      const dx = (Math.random() - 0.5) * 70;
+      p.style.cssText = `
+        position:fixed; left:${x}px; top:${y}px;
+        font-size:${14 + Math.random() * 12}px;
+        pointer-events:none; z-index:999;
+        --dx:${dx}px;
+        animation: particleUp ${0.5 + Math.random() * 0.5}s ease-out forwards;
+      `;
+      container.appendChild(p);
+      setTimeout(() => p.remove(), 1100);
+    }
+  },
+
+  showToast(msg) {
+    const existing = document.querySelector('.toast-msg');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast-msg';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2700);
+  },
+
+  // ---- 飘落花瓣 ----
+  startPetals() {
+    const petals = ['🌸', '💮', '🌷', '🍂', '✨', '🌺'];
+    const spawn = () => {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.textContent = petals[Math.floor(Math.random() * petals.length)];
+      p.style.left = Math.random() * 100 + '%';
+      p.style.fontSize = (14 + Math.random() * 18) + 'px';
+      p.style.animationDuration = (10 + Math.random() * 14) + 's';
+      p.style.animationDelay = Math.random() * 3 + 's';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 18000);
+    };
+    for (let i = 0; i < 10; i++) setTimeout(spawn, i * 700);
+    setInterval(spawn, 3500);
+  }
+};
+
+// ======================================================================
+//  木鱼模块
+// ======================================================================
+WA.muyu = {
+  audioCtx: null,
+
+  init() {
+    this.count = WA.store.get('muyu_count', 0);
+    this.total = WA.store.get('muyu_total', 0);
+    this.body = document.getElementById('muyuBody');
+    this.amountEl = document.getElementById('muyuAmount');
+    this.updateDisplay();
+    this.bindEvents();
+  },
+
+  bindEvents() {
+    const stand = document.getElementById('muyuStand');
+    stand.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      this.body.classList.add('pressed');
+      this.hit(e);
+    });
+    stand.addEventListener('pointerup', () => this.body.classList.remove('pressed'));
+    stand.addEventListener('pointerleave', () => this.body.classList.remove('pressed'));
+    stand.addEventListener('pointercancel', () => this.body.classList.remove('pressed'));
+  },
+
+  hit(e) {
+    this.count++;
+    this.total = parseFloat((this.total + 0.1).toFixed(1));
+    WA.store.set('muyu_count', this.count);
+    WA.store.set('muyu_total', this.total);
+
+    this.playSound();
+    if (navigator.vibrate) navigator.vibrate(15);
+
+    this.updateDisplay();
+    this.amountEl.classList.remove('bump');
+    void this.amountEl.offsetWidth;
+    this.amountEl.classList.add('bump');
+
+    const rect = this.body.getBoundingClientRect();
+    WA.spawnParticles(rect.left + rect.width / 2, rect.top + 10, '+0.1', 3);
+    WA.spawnParticles(rect.left + rect.width * 0.7, rect.top + 5, '💛', 2);
+
+    this.checkEasterEgg();
+  },
+
+  playSound() {
+    try {
+      if (!this.audioCtx) {
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const ctx = this.audioCtx;
+      if (ctx.state === 'suspended') ctx.resume();
+      const now = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(200, now);
+      osc.frequency.exponentialRampToValueAtTime(90, now + 0.1);
+
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+
+      osc.start(now);
+      osc.stop(now + 0.22);
+    } catch(_) {}
+  },
+
+  updateDisplay() {
+    this.amountEl.textContent = '¥' + this.total.toFixed(1);
+  },
+
+  checkEasterEgg() {
+    const special = {
+      '5.2': '💝 5.20！我爱你，不止今天',
+      '13.1': '💖 13.14！一生一世只爱你',
+      '52.0': '💗 52.0！吾爱零，爱你永无止境',
+      '99.9': '💕 99.9！长长久久，永远在一起',
+      '131.4': '💘 131.4！一生一世，只属于你'
+    };
+    const t = this.total.toFixed(1);
+    if (special[t]) {
+      setTimeout(() => {
+        WA.showToast(special[t]);
+        WA.spawnParticles(window.innerWidth / 2, window.innerHeight / 2, '🎉', 15);
+      }, 350);
+    }
+  }
+};
+
+// ======================================================================
+//  转盘模块
+// ======================================================================
+WA.wheel = {
+  prizes: [
+    { name: '谢谢惠顾',       icon: '😅', prob: 0.37, level: 0 },
+    { name: '华仔亲亲',       icon: '😘', prob: 0.20, level: 0 },
+    { name: '请喝奶茶',       icon: '🧋', prob: 0.15, level: 0 },
+    { name: '爱的抱抱',       icon: '🫂', prob: 0.12, level: 0 },
+    { name: '请吃饭',         icon: '🍽️', prob: 0.08, level: 1 },
+    { name: '买束花花',       icon: '💐', prob: 0.05, level: 1 },
+    { name: '买Jellycat',    icon: '🧸', prob: 0.02, level: 2 },
+    { name: '买包包/戒指',    icon: '💍', prob: 0.01, level: 3 },
+  ],
+  colors: ['#FFE6DA', '#FFF7F0', '#FFE0D0', '#FFFBF7', '#FFECD8', '#FFF4EC', '#FFE2CE', '#FFFAF6'],
+  spinning: false,
+  currentAngle: 0,
+
+  init() {
+    this.count = WA.store.get('wheel_count', 0);
+    this.records = WA.store.get('wheel_records', []);
+    this.milestones = WA.store.get('wheel_milestones', { m52: false, m520: false, m1314: false });
+    this.canvas = document.getElementById('wheelCanvas');
+    this.ctx = this.canvas.getContext('2d');
+    this.btn = document.getElementById('wheelBtn');
+    this.counterEl = document.getElementById('wheelCounter');
+    this.draw();
+    this.updateCounter();
+    this.bindEvents();
+  },
+
+  bindEvents() {
+    this.btn.addEventListener('click', () => this.spin());
+    document.getElementById('resultCloseBtn').addEventListener('click', () => {
+      document.getElementById('resultOverlay').classList.remove('active');
+    });
+  },
+
+  draw(rotAngle) {
+    const ctx = this.ctx;
+    const cx = 150, cy = 150, r = 140;
+    const sliceAngle = (2 * Math.PI) / this.prizes.length;
+    const angle = rotAngle || this.currentAngle;
+
+    ctx.clearRect(0, 0, 300, 300);
+
+    // 阴影圈
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r + 5, 0, 2 * Math.PI);
+    ctx.shadowColor = 'rgba(139,111,94,0.18)';
+    ctx.shadowBlur = 15;
+    ctx.fillStyle = '#FFFBF7';
+    ctx.fill();
+    ctx.restore();
+
+    for (let i = 0; i < this.prizes.length; i++) {
+      const start = i * sliceAngle + angle;
+      const end = start + sliceAngle;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, start, end);
+      ctx.closePath();
+      ctx.fillStyle = this.colors[i];
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(start + sliceAngle / 2);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#4A3728';
+      ctx.font = 'bold 16px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(this.prizes[i].icon, r * 0.6, 3);
+      ctx.font = '11px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(this.prizes[i].name, r * 0.6, 21);
+      ctx.restore();
+    }
+
+    // 中心装饰
+    ctx.beginPath();
+    ctx.arc(cx, cy, 38, 0, 2 * Math.PI);
+    const cg = ctx.createRadialGradient(cx, cy, 4, cx, cy, 38);
+    cg.addColorStop(0, '#FFFBF7');
+    cg.addColorStop(1, '#F0E6D8');
+    ctx.fillStyle = cg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+  },
+
+  getAdjustedProbs() {
+    const probs = this.prizes.map(p => ({ ...p }));
+    const c = this.count;
+    let surplus = 0;
+
+    // 里程碑 52: 请吃饭 (index 4)
+    if (!this.milestones.m52 && c >= 48) {
+      const boost = Math.min(0.35, 0.08 + (c - 48) * 0.06);
+      surplus += boost - probs[4].prob;
+      probs[4].prob = boost;
+    }
+
+    // 里程碑 520: Jellycat (index 6)
+    if (!this.milestones.m520 && c >= 505) {
+      const boost = Math.min(0.28, 0.02 + (c - 505) * 0.018);
+      surplus += boost - probs[6].prob;
+      probs[6].prob = boost;
+    }
+
+    // 里程碑 1314: 包包/戒指 (index 7)
+    if (!this.milestones.m1314 && c >= 1295) {
+      const boost = Math.min(0.22, 0.01 + (c - 1295) * 0.012);
+      surplus += boost - probs[7].prob;
+      probs[7].prob = boost;
+    }
+
+    // 分摊 surplus 到低奖级，优先从谢谢惠顾扣
+    if (surplus > 0) {
+      const drain = [0, 1, 2, 3]; // 从这些奖级扣概率
+      let remaining = surplus;
+      for (const idx of drain) {
+        if (remaining <= 0) break;
+        const take = Math.min(probs[idx].prob - 0.03, remaining);
+        if (take > 0) { probs[idx].prob -= take; remaining -= take; }
+      }
+    }
+
+    return probs;
+  },
+
+  pickPrize() {
+    const probs = this.getAdjustedProbs();
+    let r = Math.random();
+    for (let i = 0; i < probs.length; i++) {
+      r -= probs[i].prob;
+      if (r <= 0) return { index: i, prize: probs[i] };
+    }
+    return { index: 0, prize: probs[0] };
+  },
+
+  spin() {
+    if (this.spinning) return;
+    this.spinning = true;
+    this.btn.disabled = true;
+    this.count++;
+    WA.store.set('wheel_count', this.count);
+
+    const { index, prize } = this.pickPrize();
+    const sliceAngle = 360 / this.prizes.length;
+    const targetSliceCenter = index * sliceAngle + sliceAngle / 2;
+    const extraSpins = 4 + Math.floor(Math.random() * 3);
+    const totalSpinDeg = extraSpins * 360 + ((360 - targetSliceCenter) - (this.currentAngle % 360));
+    const targetAngle = this.currentAngle + totalSpinDeg;
+
+    const startAngle = this.currentAngle;
+    const duration = 3800 + Math.random() * 1400;
+    const startTime = performance.now();
+
+    const animate = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const cur = startAngle + totalSpinDeg * eased;
+      this.currentAngle = cur;
+      this.draw(cur * Math.PI / 180);
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        this.currentAngle = targetAngle;
+        this.draw(targetAngle * Math.PI / 180);
+        this.onResult(prize, index);
+      }
+    };
+
+    requestAnimationFrame(animate);
+    this.updateCounter();
+  },
+
+  onResult(prize, index) {
+    const record = {
+      time: new Date().toISOString(),
+      prize: prize.name,
+      icon: prize.icon,
+      level: prize.level
+    };
+    this.records.push(record);
+    WA.store.set('wheel_records', this.records);
+
+    // 里程碑检测
+    if (prize.level === 1 && !this.milestones.m52 && this.count >= 48) {
+      this.milestones.m52 = true;
+      WA.store.set('wheel_milestones', this.milestones);
+    }
+    if (prize.level === 2 && !this.milestones.m520 && this.count >= 505) {
+      this.milestones.m520 = true;
+      WA.store.set('wheel_milestones', this.milestones);
+    }
+    if (prize.level === 3 && !this.milestones.m1314 && this.count >= 1295) {
+      this.milestones.m1314 = true;
+      WA.store.set('wheel_milestones', this.milestones);
+    }
+
+    this.showResultModal(prize);
+
+    if (prize.level >= 2) {
+      setTimeout(() => {
+        WA.spawnParticles(window.innerWidth / 2, window.innerHeight / 2, '🎉', 20);
+        WA.spawnParticles(window.innerWidth / 2, window.innerHeight / 2, '💖', 12);
+      }, 400);
+    }
+
+    setTimeout(() => {
+      if (!document.getElementById('resultOverlay').classList.contains('active')) {
+        this.spinning = false;
+        this.btn.disabled = false;
+      }
+    }, 400);
+  },
+
+  showResultModal(prize) {
+    const content = document.getElementById('resultContent');
+    let msg = '';
+    if (prize.level >= 3) msg = '💎 天哪！超级大奖！！';
+    else if (prize.level >= 2) msg = '🎊 恭喜！大奖来啦！';
+    else if (prize.level === 1) msg = '运气不错哦～';
+    else msg = '下次会更好～';
+
+    content.innerHTML = `
+      <div style="font-size:3.5rem;margin-bottom:8px">${prize.icon}</div>
+      <div style="font-size:1.5rem;font-weight:700;color:#4A3728;margin-bottom:4px">${prize.name}</div>
+      <div style="color:#A0897B;font-size:0.88rem;margin-top:6px">${msg}</div>
+    `;
+    document.getElementById('resultOverlay').classList.add('active');
+
+    // 关闭弹窗后恢复按钮
+    const closeBtn = document.getElementById('resultCloseBtn');
+    const restore = () => {
+      this.spinning = false;
+      this.btn.disabled = false;
+      closeBtn.removeEventListener('click', restore);
+    };
+    closeBtn.addEventListener('click', restore);
+  },
+
+  updateCounter() {
+    this.counterEl.textContent = '已转 ' + this.count + ' 次';
+  }
+};
+
+// ======================================================================
+//  照片墙模块
+// ======================================================================
+WA.photos = {
+  items: [
+    { src: 'images/photos/4f04958f420a5e60cf6f3616ea59957a.jpg', caption: '你的笑容是最好的阳光 ☀️' },
+    { src: 'images/photos/53ebeacc4aa5dbfb59dc553878fce3b3.jpg', caption: '和你在一起的每一天 💕' },
+    { src: 'images/photos/5cefaa7c735e633c8ed5e44d90eda67d.jpg', caption: '宝贝真好看 🌸' },
+    { src: 'images/photos/645333594c334da9e63dda1c426c3cd9.jpg', caption: '超喜欢这张～ ✨' },
+    { src: 'images/photos/78d382a4b093ede4e9594f8fde818fe6.jpg', caption: '最美的风景就是你 🏔️' },
+    { src: 'images/photos/898e868fa8cf34ee356e59537d915fab.jpg', caption: '一直一直在一起吧 💍' },
+    { src: 'images/photos/ac6f60e355620364a1122e8c197f3021.jpg', caption: '华仔最爱的宝贝 💝' },
+    { src: 'images/photos/d81b1ad144b1e88a4c89255fb1032c14.jpg', caption: '你就是我的小太阳 🌻' },
+    { src: 'images/photos/f5b76005becde58e24807b4217aede66.jpg', caption: '看多少次都觉得心动 💗' },
+    { src: 'images/flowers/tulip1.svg', caption: '送你一束郁金香 🌷' },
+    { src: 'images/flowers/tulip2.svg', caption: '花开的时候最想你 💐' },
+    { src: 'images/flowers/tulip3.svg', caption: '温柔如你，美丽如花 🌺' },
+    { src: 'images/dogs/golden.svg', caption: '金毛的微笑治愈一切 🐕' },
+    { src: 'images/dogs/westie.svg', caption: '像你一样可爱的小西高地 🐩' },
+  ],
+
+  init() {
+    const grid = document.getElementById('photoGrid');
+    this.items.forEach((item) => {
+      const card = document.createElement('div');
+      card.className = 'photo-card';
+      card.addEventListener('click', () => this.openPhoto(item.src));
+
+      const img = document.createElement('img');
+      img.src = item.src;
+      img.alt = item.caption;
+      img.loading = 'lazy';
+
+      const cap = document.createElement('div');
+      cap.className = 'photo-caption';
+      cap.textContent = item.caption;
+
+      card.appendChild(img);
+      card.appendChild(cap);
+      grid.appendChild(card);
+    });
+
+    document.getElementById('photoOverlay').addEventListener('click', function() {
+      this.classList.remove('active');
+    });
+  },
+
+  openPhoto(src) {
+    const overlay = document.getElementById('photoOverlay');
+    const img = document.getElementById('photoLarge');
+    img.src = src;
+    overlay.classList.add('active');
+  }
+};
+
+// ======================================================================
+//  暖心话语模块
+// ======================================================================
+WA.quotes = {
+  list: [
+    // 禅意风
+    '一念放下，万般自在 🍃',
+    '一切都刚刚好，不急不躁 🌿',
+    '放下烦忧，心生欢喜 ☀️',
+    '今天的不开心就到此为止吧 🌙',
+    '深呼吸，没有什么过不去的 ⛅',
+    '静心片刻，世界都温柔了 🧘‍♀️',
+    '万物皆有裂痕，那是光照进来的地方 ✨',
+    '慢慢来，比较快 🐢',
+    '心怀温柔，岁月静好 🌸',
+    '一花一世界，一笑一尘缘 🌺',
+    '生活明朗，万物可爱 🐣',
+    '风吹哪页读哪页，随心就好 📖',
+    '你已经做得很好了，真的 💪',
+    '累了就歇歇，没关系的 🛋️',
+    '心若向阳，无惧悲伤 🌻',
+    // 甜蜜风
+    '华仔永远是你的靠山 🏔️',
+    '宝贝，你是最棒的 🌟',
+    '今天也是被华仔宠爱的一天 💕',
+    '华仔的心里只有你一个人 💘',
+    '不管你变成什么样子我都喜欢 💗',
+    '宝贝辛苦了，华仔给你捏捏肩 💆‍♀️',
+    '你笑起来最好看了，多笑笑 😊',
+    '有我在，什么都不用怕 🦸‍♂️',
+    '华仔会一直一直陪着你 🤝',
+    '你是我最珍贵的宝藏 💎',
+    '宝贝说什么都是对的 👑',
+    '全世界最好的女朋友就是你 🏆',
+    '华仔的怀抱永远为你敞开 🫂',
+    '谢谢你来到我的生命里 🙏',
+    '每天醒来第一个想到的就是你 🌅',
+  ],
+
+  init() {
+    this.el = document.getElementById('quoteText');
+    this.card = document.getElementById('quoteCard');
+    this.showRandom();
+    this.card.addEventListener('click', () => this.nextQuote());
+  },
+
+  showRandom() {
+    let i = WA.store.get('quotes_index', -1);
+    if (i < 0 || i >= this.list.length) {
+      i = Math.floor(Math.random() * this.list.length);
+    }
+    this.currentIndex = i;
+    this.el.textContent = this.list[i];
+  },
+
+  nextQuote() {
+    this.el.classList.add('fade');
+    setTimeout(() => {
+      const next = (this.currentIndex + 1) % this.list.length;
+      this.currentIndex = next;
+      this.el.textContent = this.list[next];
+      WA.store.set('quotes_index', next);
+      this.el.classList.remove('fade');
+    }, 300);
+  }
+};
+
+// ======================================================================
+//  管理面板模块
+// ======================================================================
+WA.admin = {
+  init() {
+    this.overlay = document.getElementById('adminOverlay');
+    this.body = document.getElementById('adminBody');
+    this.pwdOverlay = document.getElementById('pwdOverlay');
+    this.pwdInput = document.getElementById('pwdInput');
+
+    // 长按标题 3 秒
+    const title = document.getElementById('heroTitle');
+    let pressTimer;
+    const startPress = () => {
+      pressTimer = setTimeout(() => {
+        this.pwdInput.value = '';
+        this.pwdOverlay.classList.add('active');
+        this.pwdInput.focus();
+      }, 3000);
+    };
+    const cancelPress = () => clearTimeout(pressTimer);
+
+    title.addEventListener('pointerdown', startPress);
+    title.addEventListener('pointerup', cancelPress);
+    title.addEventListener('pointerleave', cancelPress);
+    title.addEventListener('pointercancel', cancelPress);
+    // 移动端用手指移动时取消（防止误触发）
+    title.addEventListener('touchmove', cancelPress);
+
+    document.getElementById('pwdConfirm').addEventListener('click', () => this.verify());
+    document.getElementById('pwdCancel').addEventListener('click', () => {
+      this.pwdOverlay.classList.remove('active');
+    });
+    this.pwdInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') this.verify();
+    });
+    document.getElementById('adminClose').addEventListener('click', () => {
+      this.overlay.classList.remove('active');
+    });
+  },
+
+  verify() {
+    if (this.pwdInput.value === WA.PASSWORD) {
+      this.pwdOverlay.classList.remove('active');
+      this.show();
+    } else {
+      WA.showToast('密码错误 ❌');
+      this.pwdInput.value = '';
+      this.pwdInput.focus();
+    }
+  },
+
+  show() {
+    const mc = WA.store.get('muyu_count', 0);
+    const mt = WA.store.get('muyu_total', 0);
+    const wc = WA.store.get('wheel_count', 0);
+    const records = WA.store.get('wheel_records', []);
+    const ms = WA.store.get('wheel_milestones', {});
+
+    const prizeCount = {};
+    records.forEach(r => { prizeCount[r.prize] = (prizeCount[r.prize] || 0) + 1; });
+
+    this.body.innerHTML = `
+      <div class="admin-section-title">📊 木鱼统计</div>
+      <div class="admin-stat"><span class="admin-stat-label">总敲击数</span><span class="admin-stat-value">${mc} 次</span></div>
+      <div class="admin-stat"><span class="admin-stat-label">累计金额</span><span class="admin-stat-value">¥${mt.toFixed(1)}</span></div>
+
+      <div class="admin-section-title">🎡 转盘统计</div>
+      <div class="admin-stat"><span class="admin-stat-label">总转动次数</span><span class="admin-stat-value">${wc} 次</span></div>
+      <div class="admin-stat"><span class="admin-stat-label">里程碑 · 请吃饭 (≈52次)</span><span class="admin-stat-value">${ms.m52 ? '✅ 已触发' : '⏳ 未触发 (' + wc + '/~52)'}</span></div>
+      <div class="admin-stat"><span class="admin-stat-label">里程碑 · Jellycat (≈520次)</span><span class="admin-stat-value">${ms.m520 ? '✅ 已触发' : '⏳ 未触发 (' + wc + '/~520)'}</span></div>
+      <div class="admin-stat"><span class="admin-stat-label">里程碑 · 戒指/包包 (≈1314次)</span><span class="admin-stat-value">${ms.m1314 ? '✅ 已触发' : '⏳ 未触发 (' + wc + '/~1314)'}</span></div>
+
+      <div class="admin-section-title">🏆 各奖品中奖次数</div>
+      ${WA.wheel.prizes.map(p => `
+        <div class="admin-stat"><span class="admin-stat-label">${p.icon} ${p.name}</span><span class="admin-stat-value">${prizeCount[p.name] || 0} 次</span></div>
+      `).join('')}
+
+      <div class="admin-section-title">📋 最近中奖记录</div>
+      <div class="admin-records">
+        ${records.slice().reverse().slice(0, 50).map(r => `
+          <div class="admin-record">
+            <span class="admin-record-prize">${r.icon} ${r.prize}</span>
+            <span>${new Date(r.time).toLocaleString('zh-CN', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+        `).join('') || '<div style="color:#A0897B;text-align:center;padding:12px;">暂无记录</div>'}
+      </div>
+
+      <button class="admin-btn admin-btn-info" id="adminRefresh">🔄 刷新数据</button>
+      <button class="admin-btn admin-btn-danger" id="adminReset">⚠️ 重置所有数据</button>
+    `;
+
+    document.getElementById('adminRefresh').addEventListener('click', () => this.show());
+
+    document.getElementById('adminReset').addEventListener('click', () => {
+      if (confirm('确定要重置所有数据吗？此操作不可恢复！')) {
+        if (confirm('再次确认：真的要清除所有木鱼金额和转盘记录吗？')) {
+          ['muyu_count','muyu_total','wheel_count','wheel_records','wheel_milestones','quotes_index'].forEach(k => {
+            WA.store.set(k, k === 'wheel_milestones' ? { m52: false, m520: false, m1314: false } : (k === 'wheel_records' ? [] : 0));
+          });
+          WA.muyu.count = 0;
+          WA.muyu.total = 0;
+          WA.muyu.updateDisplay();
+          WA.wheel.count = 0;
+          WA.wheel.records = [];
+          WA.wheel.milestones = { m52: false, m520: false, m1314: false };
+          WA.wheel.updateCounter();
+          this.show();
+          WA.showToast('数据已重置 ✅');
+        }
+      }
+    });
+
+    this.overlay.classList.add('active');
+  }
+};
+
+// ======================================================================
+//  启动
+// ======================================================================
+WA.init();
+WA.startPetals();
+WA.muyu.init();
+WA.wheel.init();
+WA.photos.init();
+WA.quotes.init();
+WA.admin.init();
+</script>
+
+</body>
+</html>
