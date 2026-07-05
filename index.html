@@ -777,14 +777,14 @@ body {
 }
 
 .history-title {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--brown);
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .history-list {
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
 }
 
@@ -792,24 +792,31 @@ body {
   background: linear-gradient(135deg, #FFFEF9, #FFF5E8);
   border: 1px solid #EDE0CC;
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   margin-bottom: 10px;
   position: relative;
 }
 
 .history-item-time {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: #B8A090;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .history-item-text {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: #4A3728;
-  line-height: 1.6;
+  line-height: 1.7;
   white-space: pre-wrap;
   word-break: break-word;
   font-family: "STKaiti", "KaiTi", serif;
+}
+
+.history-empty {
+  text-align: center;
+  color: #C8B4A4;
+  font-size: 0.88rem;
+  padding: 20px 0;
 }
 
 /* ===== 管理面板 ===== */
@@ -1011,12 +1018,13 @@ body {
         <div class="done-text">烦恼已随海浪飘走啦～</div>
         <div class="done-sub">大海带走了它，新的一天开始了 ✨</div>
         <button class="toss-btn toss-btn-reset" id="resetBtn">✍️ 再写一张</button>
-      </div>
+    </div>
 
-      <!-- 阶段3: 历史记录 -->
-      <div class="bottle-history" id="bottleHistory">
-        <div class="history-title">📋 曾经丢掉的烦恼</div>
-        <div class="history-list" id="historyList"></div>
+    <!-- 历史记录：始终可见 -->
+    <div class="bottle-history" id="bottleHistory">
+      <div class="history-title">📋 我的漂流瓶</div>
+      <div class="history-list" id="historyList">
+        <div style="color:#C8B4A4;text-align:center;font-size:0.85rem;">还没有丢过烦恼哦～</div>
       </div>
     </div>
   </section>
