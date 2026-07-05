@@ -420,6 +420,171 @@ body {
   margin-top: 10px;
 }
 
+/* ===== 烦恼漂流瓶 ===== */
+.bottle-stage {
+  position: relative;
+  min-height: 260px;
+}
+
+/* 阶段0 — 便签 */
+.note-wrapper {
+  position: relative;
+  background: linear-gradient(180deg, #FFFEF9 0%, #FFF9E8 50%, #FFFEF9 100%);
+  border: 1px solid #E8D5B0;
+  border-radius: 4px;
+  padding: 20px 16px 36px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 14px;
+}
+
+.note-lines {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent,
+    transparent 27px,
+    #E8D5B0 27px,
+    #E8D5B0 28px
+  );
+  pointer-events: none;
+  border-radius: 4px;
+}
+
+.note-textarea {
+  position: relative; z-index: 1;
+  width: 100%; min-height: 140px;
+  background: transparent; border: none;
+  font-size: 0.95rem; line-height: 28px;
+  font-family: "Georgia", "STKaiti", "KaiTi", serif;
+  color: #4A3728; resize: none; outline: none;
+}
+
+.note-textarea::placeholder { color: #C8B4A4; font-style: italic; }
+
+.note-char-count {
+  position: relative; z-index: 1;
+  text-align: right; font-size: 0.72rem;
+  color: #C8B4A4; margin-top: 4px;
+}
+
+.toss-btn {
+  display: block; width: 100%;
+  padding: 12px;
+  border: none; border-radius: 25px;
+  background: linear-gradient(135deg, #5B9BD5, #3B7DC4);
+  color: white; font-size: 1rem; font-family: var(--font-main);
+  cursor: pointer; transition: transform 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.toss-btn:active { transform: scale(0.97); }
+
+.toss-btn-reset {
+  background: linear-gradient(135deg, var(--deep-pink), #D4889A);
+}
+
+/* 阶段1 — 动画 */
+.bottle-anim-stage {
+  display: none;
+  position: relative; height: 320px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #E8F4FD 0%, #A8D8EA 60%, #5B9BD5 100%);
+}
+
+.bottle-anim-stage.running { display: block; }
+
+.anim-paper {
+  position: absolute;
+  top: 40px; left: 50%;
+  transform: translateX(-50%);
+  width: 160px; height: auto;
+  min-height: 50px;
+  background: #FFFEF9;
+  border: 1px solid #E8D5B0;
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-family: "STKaiti", "KaiTi", serif;
+  font-size: 0.75rem;
+  color: #6B5A4E;
+  line-height: 1.5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 10;
+  opacity: 1;
+  transition: none;
+}
+
+.anim-paper.rolling {
+  animation: rollPaper 0.8s ease-in-out forwards;
+}
+
+@keyframes rollPaper {
+  0%   { width: 160px; opacity: 1; }
+  40%  { width: 80px; opacity: 1; }
+  60%  { width: 20px; height: 50px; border-radius: 10px; opacity: 0.8; }
+  100% { width: 12px; height: 40px; border-radius: 50%; opacity: 0; top: 80px; }
+}
+
+.anim-bottle {
+  position: absolute;
+  bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  z-index: 5;
+  transition: none;
+}
+
+.anim-bottle.catched {
+  animation: bottleCatched 0.3s ease-out;
+}
+
+@keyframes bottleCatched {
+  0%   { transform: translateX(-50%) scale(1); }
+  50%  { transform: translateX(-50%) scale(1.15); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+.anim-bottle.sailing {
+  animation: bottleSail 2s ease-in-out forwards;
+}
+
+@keyframes bottleSail {
+  0%   { transform: translate(-50%, 0) rotate(0deg); }
+  20%  { transform: translate(-40%, -10px) rotate(5deg); }
+  40%  { transform: translate(-60%, -20px) rotate(-3deg); }
+  60%  { transform: translate(-50px, -30px) rotate(8deg); opacity: 0.7; }
+  100% { transform: translate(300px, -60px) rotate(15deg); opacity: 0; }
+}
+
+.anim-waves {
+  display: none;
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  font-size: 2rem; letter-spacing: 10px;
+  text-align: center;
+  animation: waveMove 3s linear infinite;
+  z-index: 2;
+}
+
+.anim-waves.active { display: block; }
+
+@keyframes waveMove {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-40px); }
+}
+
+/* 阶段2 — 完成 */
+.bottle-done {
+  display: none;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+.bottle-done.show { display: block; }
+
+.done-icon { font-size: 3.5rem; margin-bottom: 12px; animation: floatHearts 3s ease-in-out infinite; }
+.done-text { font-size: 1.15rem; color: var(--brown); font-weight: 600; margin-bottom: 6px; }
+.done-sub { font-size: 0.85rem; color: #A0897B; margin-bottom: 20px; }
+
 /* ===== 管理面板 ===== */
 .admin-overlay {
   display: none;
@@ -576,6 +741,39 @@ body {
     <div class="quote-card" id="quoteCard">
       <div class="quote-text" id="quoteText"></div>
       <div class="quote-hint">👆 点击换一句</div>
+    </div>
+  </section>
+
+  <!-- ===== 烦恼漂流瓶 ===== -->
+  <section class="section bottle-section" id="bottleSection">
+    <div class="section-title">🍾 烦恼漂流瓶</div>
+    <div class="bottle-stage" id="bottleStage">
+      <!-- 阶段0: 写烦恼 -->
+      <div class="note-wrapper" id="noteWrapper">
+        <div class="note-lines"></div>
+        <textarea class="note-textarea" id="worryInput" placeholder="在这里写下你的烦恼吧..." maxlength="200"></textarea>
+        <div class="note-char-count"><span id="charCount">0</span>/200</div>
+      </div>
+      <button class="toss-btn" id="tossBtn">📜 卷起烦恼，丢进大海 🌊</button>
+
+      <!-- 阶段1: 动画区 -->
+      <div class="bottle-anim-stage" id="bottleAnimStage">
+        <div class="anim-paper" id="animPaper">
+          <div class="anim-paper-text" id="animPaperText"></div>
+        </div>
+        <div class="anim-bottle" id="animBottle">🍾</div>
+        <div class="anim-waves" id="animWaves">
+          <span>🌊</span><span>🌊</span><span>🌊</span>
+        </div>
+      </div>
+
+      <!-- 阶段2: 完成 -->
+      <div class="bottle-done" id="bottleDone">
+        <div class="done-icon">🌅</div>
+        <div class="done-text">烦恼已随海浪飘走啦～</div>
+        <div class="done-sub">大海带走了它，新的一天开始了 ✨</div>
+        <button class="toss-btn toss-btn-reset" id="resetBtn">✍️ 再写一张</button>
+      </div>
     </div>
   </section>
 
@@ -949,7 +1147,7 @@ WA.wheel = {
     const sliceAngle = 360 / this.prizes.length;
     const targetSliceCenter = index * sliceAngle + sliceAngle / 2;
     const extraSpins = 4 + Math.floor(Math.random() * 3);
-    const totalSpinDeg = extraSpins * 360 + ((360 - targetSliceCenter) - (this.currentAngle % 360));
+    const totalSpinDeg = extraSpins * 360 + ((270 - targetSliceCenter) - ((this.currentAngle % 360) + 360) % 360);
     const targetAngle = this.currentAngle + totalSpinDeg;
 
     const startAngle = this.currentAngle;
@@ -1170,6 +1368,165 @@ WA.quotes = {
 };
 
 // ======================================================================
+//  烦恼漂流瓶模块
+// ======================================================================
+WA.bottle = {
+  init() {
+    this.noteWrapper = document.getElementById('noteWrapper');
+    this.worryInput = document.getElementById('worryInput');
+    this.charCount = document.getElementById('charCount');
+    this.tossBtn = document.getElementById('tossBtn');
+    this.animStage = document.getElementById('bottleAnimStage');
+    this.animPaper = document.getElementById('animPaper');
+    this.animPaperText = document.getElementById('animPaperText');
+    this.animBottle = document.getElementById('animBottle');
+    this.animWaves = document.getElementById('animWaves');
+    this.bottleDone = document.getElementById('bottleDone');
+    this.resetBtn = document.getElementById('resetBtn');
+
+    // 字数统计
+    this.worryInput.addEventListener('input', () => {
+      this.charCount.textContent = this.worryInput.value.length;
+    });
+
+    // 提交按钮
+    this.tossBtn.addEventListener('click', () => {
+      const text = this.worryInput.value.trim();
+      if (!text) { WA.showToast('先写点什么吧～ ✍️'); return; }
+      this.startAnimation(text);
+    });
+
+    // 重置按钮
+    this.resetBtn.addEventListener('click', () => this.reset());
+
+    // 恢复上一次的状态
+    this.restoreState();
+  },
+
+  restoreState() {
+    const savedText = WA.store.get('bottle_last', '');
+    const savedDone = WA.store.get('bottle_done', false);
+    if (savedDone && savedText) {
+      this.showDoneState(savedText);
+    } else if (savedText) {
+      this.worryInput.value = savedText;
+      this.charCount.textContent = savedText.length;
+    }
+  },
+
+  startAnimation(text) {
+    // 隐藏便签和按钮
+    this.noteWrapper.style.display = 'none';
+    this.tossBtn.style.display = 'none';
+    this.bottleDone.classList.remove('show');
+    this.bottleDone.style.display = 'none';
+
+    // 显示动画舞台
+    this.animStage.classList.add('running');
+    this.animPaper.classList.remove('rolling');
+    this.animBottle.classList.remove('catched', 'sailing');
+    this.animWaves.classList.remove('active');
+
+    // 设置纸条内容（截断显示）
+    const shortText = text.length > 60 ? text.slice(0, 60) + '…' : text;
+    this.animPaperText.textContent = shortText;
+
+    // 重置动画元素
+    this.animPaper.style.opacity = '1';
+    this.animPaper.style.width = '160px';
+    this.animPaper.style.height = 'auto';
+    this.animPaper.style.borderRadius = '3px';
+    this.animPaper.style.top = '40px';
+    this.animBottle.style.opacity = '1';
+    this.animBottle.style.transform = 'translateX(-50%)';
+
+    // 阶段1: 纸条卷起来（0.8s）
+    setTimeout(() => {
+      this.animPaper.classList.add('rolling');
+      // 播放卷纸音效
+      this.playCrinkle();
+    }, 300);
+
+    // 阶段2: 纸条飞进瓶子（1.2s）
+    setTimeout(() => {
+      this.animBottle.classList.add('catched');
+      WA.spawnParticles(
+        document.querySelector('.bottle-section').getBoundingClientRect().left + 200,
+        document.querySelector('.bottle-section').getBoundingClientRect().top + 260,
+        '✨', 5
+      );
+    }, 1300);
+
+    // 阶段3: 瓶子抛向大海（1.8s）
+    setTimeout(() => {
+      this.animWaves.classList.add('active');
+      this.animBottle.classList.add('sailing');
+      WA.spawnParticles(
+        document.querySelector('.bottle-section').getBoundingClientRect().left + 250,
+        document.querySelector('.bottle-section').getBoundingClientRect().top + 200,
+        '💧', 8
+      );
+    }, 1800);
+
+    // 阶段4: 显示完成（3.5s）
+    setTimeout(() => {
+      this.showDoneState(text);
+    }, 3500);
+
+    // 保存状态
+    WA.store.set('bottle_last', text);
+    WA.store.set('bottle_done', true);
+  },
+
+  showDoneState(text) {
+    this.noteWrapper.style.display = 'none';
+    this.tossBtn.style.display = 'none';
+    this.animStage.classList.remove('running');
+    this.bottleDone.classList.add('show');
+    this.bottleDone.style.display = 'block';
+    WA.store.set('bottle_done', true);
+  },
+
+  reset() {
+    this.noteWrapper.style.display = 'block';
+    this.tossBtn.style.display = 'block';
+    this.animStage.classList.remove('running');
+    this.bottleDone.classList.remove('show');
+    this.bottleDone.style.display = 'none';
+    this.worryInput.value = '';
+    this.charCount.textContent = '0';
+    this.animPaper.classList.remove('rolling');
+    this.animBottle.classList.remove('catched', 'sailing');
+    this.animWaves.classList.remove('active');
+    WA.store.set('bottle_last', '');
+    WA.store.set('bottle_done', false);
+  },
+
+  playCrinkle() {
+    try {
+      const ctx = WA.muyu.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+      const now = ctx.currentTime;
+
+      // 纸卷动的声音 — 短促的沙沙声
+      const bufferSize = ctx.sampleRate * 0.3;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.05));
+      }
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.08, now);
+      source.connect(gain);
+      gain.connect(ctx.destination);
+      source.start(now);
+    } catch(_) {}
+  }
+};
+
+// ======================================================================
 //  管理面板模块
 // ======================================================================
 WA.admin = {
@@ -1295,6 +1652,7 @@ WA.muyu.init();
 WA.wheel.init();
 WA.photos.init();
 WA.quotes.init();
+WA.bottle.init();
 WA.admin.init();
 </script>
 
