@@ -483,159 +483,277 @@ body {
   background: linear-gradient(135deg, var(--deep-pink), #D4889A);
 }
 
-/* 阶段1 — 动画 */
+/* ===== 全新海洋动画舞台 ===== */
 .bottle-anim-stage {
   display: none;
-  position: relative; height: 340px;
+  position: relative; height: 380px;
   overflow: hidden;
   border-radius: 14px;
-  background: linear-gradient(180deg, #E8F4FD 0%, #A8D8EA 60%, #5B9BD5 100%);
+  background: linear-gradient(180deg,
+    #87CEEB 0%,    /* 天空 */
+    #B8E0F0 25%,
+    #D4EEF7 40%,   /* 海天交接 */
+    #5BADD5 50%,   /* 浅海 */
+    #3D8FBF 70%,   /* 深海 */
+    #1B5E8A 100%
+  );
 }
 
 .bottle-anim-stage.running { display: block; }
 
-.anim-paper {
-  position: absolute;
-  top: 30px; left: 50%;
-  transform: translateX(-50%);
-  width: 170px;
-  background: #FFFEF9;
-  border: 1px solid #D4C5A0;
-  border-radius: 3px;
-  padding: 14px 14px;
-  font-family: "STKaiti", "KaiTi", serif;
-  font-size: 0.8rem;
-  color: #4A3728;
-  line-height: 1.8;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
-  z-index: 10;
-  opacity: 1;
+/* 天空元素 */
+.ocean-sky {
+  position: absolute; top: 0; left: 0; right: 0; height: 55%;
+  overflow: hidden;
 }
 
-/* 翻页折角 */
-.anim-paper::after {
+.sun {
+  position: absolute;
+  top: 12px; right: 30px;
+  width: 45px; height: 45px;
+  background: radial-gradient(circle, #FFF3C4 0%, #FFD166 40%, #F0A030 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 30px rgba(255, 209, 102, 0.6), 0 0 60px rgba(255, 180, 80, 0.3);
+  animation: sunGlow 3s ease-in-out infinite;
+}
+
+@keyframes sunGlow {
+  0%, 100% { box-shadow: 0 0 25px rgba(255, 209, 102, 0.5), 0 0 50px rgba(255, 180, 80, 0.25); }
+  50% { box-shadow: 0 0 40px rgba(255, 209, 102, 0.8), 0 0 80px rgba(255, 180, 80, 0.4); }
+}
+
+.cloud {
+  position: absolute;
+  background: white;
+  border-radius: 50px;
+  opacity: 0.85;
+}
+
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+}
+
+.cloud1 {
+  width: 70px; height: 22px;
+  top: 25px; left: 15%;
+  animation: cloudDrift1 20s linear infinite;
+}
+.cloud1::before { width: 30px; height: 30px; top: -15px; left: 15px; }
+.cloud1::after { width: 22px; height: 22px; top: -10px; left: 40px; }
+
+.cloud2 {
+  width: 50px; height: 16px;
+  top: 55px; left: 55%;
+  animation: cloudDrift2 25s linear infinite;
+}
+.cloud2::before { width: 22px; height: 22px; top: -12px; left: 10px; }
+.cloud2::after { width: 16px; height: 16px; top: -8px; left: 28px; }
+
+.cloud3 {
+  width: 60px; height: 18px;
+  top: 70px; left: 80%;
+  animation: cloudDrift1 18s linear infinite;
+  animation-delay: -8s;
+}
+.cloud3::before { width: 26px; height: 26px; top: -14px; left: 12px; }
+.cloud3::after { width: 18px; height: 18px; top: -9px; left: 35px; }
+
+@keyframes cloudDrift1 {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-120px); }
+}
+@keyframes cloudDrift2 {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-80px); }
+}
+
+.birds {
+  position: absolute;
+  top: 40px; right: 120px;
+  font-size: 0.8rem; letter-spacing: 6px;
+  animation: birdFly 4s ease-in-out infinite;
+}
+
+@keyframes birdFly {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(-20px) translateY(-8px); }
+  50% { transform: translateX(-40px) translateY(0); }
+  75% { transform: translateX(-60px) translateY(-5px); }
+}
+
+/* 海面 */
+.ocean-surface {
+  position: absolute; top: 44%; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  left: -10%; width: 120%;
+  border-radius: 40%;
+  opacity: 0.6;
+}
+
+.wave1 {
+  top: 2px; height: 40px;
+  background: rgba(100, 180, 220, 0.5);
+  animation: waveRoll 4s ease-in-out infinite;
+}
+.wave2 {
+  top: 14px; height: 45px;
+  background: rgba(70, 150, 200, 0.45);
+  animation: waveRoll 5s ease-in-out infinite reverse;
+}
+.wave3 {
+  top: 28px; height: 50px;
+  background: rgba(40, 120, 180, 0.4);
+  animation: waveRoll 6s ease-in-out infinite;
+}
+
+@keyframes waveRoll {
+  0%, 100% { transform: translateX(-3%) rotate(0deg); }
+  25% { transform: translateX(3%) rotate(1deg); }
+  50% { transform: translateX(-2%) rotate(0deg); }
+  75% { transform: translateX(2%) rotate(-1deg); }
+}
+
+/* 卷纸动画 */
+.paper-roll-stage {
+  position: absolute;
+  top: 15%; left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.anim-paper-new {
+  width: 160px;
+  background: linear-gradient(180deg, #FFFEF9 0%, #FFF9E8 100%);
+  border: 1px solid #D4C5A0;
+  border-radius: 3px;
+  padding: 16px 14px;
+  font-family: "STKaiti", "KaiTi", serif;
+  font-size: 0.78rem;
+  color: #4A3728;
+  line-height: 1.7;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  transform-origin: bottom center;
+  transition: none;
+}
+
+.anim-paper-new::after {
   content: '';
   position: absolute;
   bottom: 0; right: 0;
-  width: 0; height: 0;
+  border-width: 0 0 20px 20px;
   border-style: solid;
-  border-width: 0 0 18px 18px;
   border-color: transparent transparent #E8D5B0 transparent;
 }
 
-.anim-paper.rolling {
-  animation: rollPaperUp 2.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+.anim-paper-new.rolling {
+  animation: rollUp 2.8s cubic-bezier(0.22, 0.05, 0.36, 1) forwards;
 }
 
-@keyframes rollPaperUp {
+@keyframes rollUp {
   0% {
-    transform: translateX(-50%) rotate(0deg) scale(1);
+    transform: scale(1);
     border-radius: 3px;
-    width: 170px;
   }
-  15% {
-    transform: translateX(-50%) rotate(-2deg) scale(0.98);
-    border-radius: 6px;
-    width: 170px;
+  20% {
+    transform: scale(0.95) rotate(-1deg);
   }
-  30% {
-    transform: translateX(-50%) rotate(1deg) scale(0.95);
-    width: 150px;
+  35% {
+    /* 下边缘开始卷 */
+    clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 92% 90%, 85% 85%, 92% 88%, 85% 84%, 92% 87%, 0% 85%);
+    transform: scale(0.9) rotate(1deg);
   }
   50% {
-    transform: translateX(-50%) rotate(-1deg) scale(0.9);
-    width: 100px;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 85% 78%, 70% 72%, 85% 76%, 70% 70%, 85% 75%, 0% 70%);
+    transform: scale(0.85) rotate(-1.5deg);
+    border-radius: 8px;
+  }
+  65% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 80% 58%, 65% 52%, 80% 56%, 65% 50%, 0% 50%);
+    transform: scale(0.78) rotate(2deg);
     border-radius: 20px;
   }
-  70% {
-    transform: translateX(-50%) rotate(3deg) scale(0.85);
-    width: 40px;
-    border-radius: 30px;
+  80% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 30%, 50% 35%, 0% 30%);
+    transform: scale(0.7) rotate(-1deg);
+    border-radius: 25px;
   }
-  85% {
-    transform: translateX(-50%) rotate(0deg) scale(0.8);
-    width: 16px;
-    border-radius: 50%;
-    opacity: 0.9;
+  95% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 12%, 50% 14%, 0% 12%);
+    transform: scale(0.6);
+    border-radius: 30px;
+    opacity: 0.7;
   }
   100% {
-    transform: translateX(-50%) translateY(20px) rotate(0deg) scale(0.7);
-    width: 10px;
-    border-radius: 50%;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 8%, 50% 10%, 0% 8%);
+    transform: scale(0.5);
+    border-radius: 30px;
     opacity: 0;
   }
 }
 
-.anim-paper.fly-to-bottle {
-  animation: flyToBottle 0.6s ease-in forwards !important;
-}
-
-@keyframes flyToBottle {
-  0%   { top: 30px; left: 50%; transform: translateX(-50%) scale(0.6); opacity: 0.8; }
-  100% { top: 240px; left: 50%; transform: translateX(-50%) scale(0.15); opacity: 0; }
-}
-
-.anim-bottle {
+/* 瓶子 */
+.bottle-sail {
   position: absolute;
-  bottom: 15px; left: 50%;
+  bottom: 12%;
+  left: 50%;
   transform: translateX(-50%);
-  font-size: 3.2rem;
-  z-index: 5;
-  transition: none;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
-}
-
-.anim-bottle.catched {
-  animation: bottleCatched 0.4s ease-out;
-}
-
-@keyframes bottleCatched {
-  0%   { transform: translateX(-50%) scale(1); }
-  40%  { transform: translateX(-50%) scale(1.2) rotate(3deg); }
-  70%  { transform: translateX(-50%) scale(1.05) rotate(-2deg); }
-  100% { transform: translateX(-50%) scale(1.1); }
-}
-
-.anim-bottle.sailing {
-  animation: bottleSail 2.5s ease-in-out forwards;
-}
-
-@keyframes bottleSail {
-  0%   { transform: translate(-50%, 0) rotate(0deg); }
-  15%  { transform: translate(-35%, -8px) rotate(4deg); }
-  30%  { transform: translate(-55%, -18px) rotate(-3deg); }
-  50%  { transform: translate(-60px, -30px) rotate(6deg); opacity: 0.8; }
-  70%  { transform: translate(30px, -45px) rotate(-5deg); opacity: 0.5; }
-  100% { transform: translate(300px, -70px) rotate(12deg); opacity: 0; }
-}
-
-.anim-waves {
-  display: none;
-  position: absolute;
-  bottom: 5px; left: -20px;
-  width: calc(100% + 40px);
-  font-size: 2.5rem; letter-spacing: 12px;
-  text-align: center;
-  animation: waveMove 2s linear infinite;
-  z-index: 2;
-  opacity: 0.7;
-}
-
-.anim-waves.active { display: block; }
-
-@keyframes waveMove {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50px); }
-}
-
-/* 纸条文字过渡 */
-.anim-paper-text {
+  font-size: 3.5rem;
+  z-index: 8;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.2));
   transition: none;
 }
 
-.anim-paper.rolling .anim-paper-text {
-  opacity: 0;
-  transition: opacity 0.3s 0.5s;
+.bottle-sail.nod {
+  animation: bottleNod 0.5s ease-out;
+}
+
+@keyframes bottleNod {
+  0% { transform: translateX(-50%) scale(1); }
+  40% { transform: translateX(-50%) scale(1.18) rotate(5deg); }
+  70% { transform: translateX(-50%) scale(1.05) rotate(-3deg); }
+  100% { transform: translateX(-50%) scale(1.08); }
+}
+
+.bottle-sail.sailing {
+  animation: sailAway 3s ease-in-out forwards;
+}
+
+@keyframes sailAway {
+  0% {
+    transform: translate(-50%, 0) rotate(0deg);
+    opacity: 1;
+  }
+  10% {
+    transform: translate(-45%, -5px) rotate(3deg);
+    opacity: 1;
+  }
+  25% {
+    transform: translate(-55%, -15px) rotate(-5deg);
+    opacity: 0.9;
+  }
+  40% {
+    transform: translate(-40%, -25px) rotate(7deg);
+    opacity: 0.75;
+  }
+  60% {
+    transform: translate(20px, -40px) rotate(-8deg);
+    opacity: 0.5;
+  }
+  80% {
+    transform: translate(120px, -60px) rotate(12deg);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translate(350px, -90px) rotate(20deg);
+    opacity: 0;
+  }
 }
 
 /* 阶段2 — 完成 */
@@ -650,6 +768,49 @@ body {
 .done-icon { font-size: 3.5rem; margin-bottom: 12px; animation: floatHearts 3s ease-in-out infinite; }
 .done-text { font-size: 1.15rem; color: var(--brown); font-weight: 600; margin-bottom: 6px; }
 .done-sub { font-size: 0.85rem; color: #A0897B; margin-bottom: 20px; }
+
+/* 历史记录 */
+.bottle-history {
+  margin-top: 18px;
+  border-top: 1px solid #F0E6D8;
+  padding-top: 14px;
+}
+
+.history-title {
+  font-size: 0.9rem;
+  color: var(--brown);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.history-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.history-item {
+  background: linear-gradient(135deg, #FFFEF9, #FFF5E8);
+  border: 1px solid #EDE0CC;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.history-item-time {
+  font-size: 0.72rem;
+  color: #B8A090;
+  margin-bottom: 4px;
+}
+
+.history-item-text {
+  font-size: 0.88rem;
+  color: #4A3728;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: "STKaiti", "KaiTi", serif;
+}
 
 /* ===== 管理面板 ===== */
 .admin-overlay {
@@ -817,20 +978,31 @@ body {
       <!-- 阶段0: 写烦恼 -->
       <div class="note-wrapper" id="noteWrapper">
         <div class="note-lines"></div>
-        <textarea class="note-textarea" id="worryInput" placeholder="在这里写下你的烦恼吧..." maxlength="200"></textarea>
-        <div class="note-char-count"><span id="charCount">0</span>/200</div>
+        <textarea class="note-textarea" id="worryInput" placeholder="在这里写下你的烦恼吧..." maxlength="1000"></textarea>
+        <div class="note-char-count"><span id="charCount">0</span>/1000</div>
       </div>
       <button class="toss-btn" id="tossBtn">📜 卷起烦恼，丢进大海 🌊</button>
 
       <!-- 阶段1: 动画区 -->
       <div class="bottle-anim-stage" id="bottleAnimStage">
-        <div class="anim-paper" id="animPaper">
-          <div class="anim-paper-text" id="animPaperText"></div>
+        <div class="ocean-sky" id="oceanSky">
+          <div class="sun"></div>
+          <div class="cloud cloud1"></div>
+          <div class="cloud cloud2"></div>
+          <div class="cloud cloud3"></div>
+          <div class="birds"></div>
         </div>
-        <div class="anim-bottle" id="animBottle">🍾</div>
-        <div class="anim-waves" id="animWaves">
-          <span>🌊</span><span>🌊</span><span>🌊</span>
+        <div class="ocean-surface" id="oceanSurface">
+          <div class="wave wave1"></div>
+          <div class="wave wave2"></div>
+          <div class="wave wave3"></div>
         </div>
+        <div class="paper-roll-stage" id="paperRollStage">
+          <div class="anim-paper-new" id="animPaperNew">
+            <div class="anim-paper-inner" id="animPaperInner"></div>
+          </div>
+        </div>
+        <div class="bottle-sail" id="bottleSail">🍾</div>
       </div>
 
       <!-- 阶段2: 完成 -->
@@ -839,6 +1011,12 @@ body {
         <div class="done-text">烦恼已随海浪飘走啦～</div>
         <div class="done-sub">大海带走了它，新的一天开始了 ✨</div>
         <button class="toss-btn toss-btn-reset" id="resetBtn">✍️ 再写一张</button>
+      </div>
+
+      <!-- 阶段3: 历史记录 -->
+      <div class="bottle-history" id="bottleHistory">
+        <div class="history-title">📋 曾经丢掉的烦恼</div>
+        <div class="history-list" id="historyList"></div>
       </div>
     </div>
   </section>
@@ -1443,12 +1621,12 @@ WA.bottle = {
     this.charCount = document.getElementById('charCount');
     this.tossBtn = document.getElementById('tossBtn');
     this.animStage = document.getElementById('bottleAnimStage');
-    this.animPaper = document.getElementById('animPaper');
-    this.animPaperText = document.getElementById('animPaperText');
-    this.animBottle = document.getElementById('animBottle');
-    this.animWaves = document.getElementById('animWaves');
+    this.animPaperNew = document.getElementById('animPaperNew');
+    this.animPaperInner = document.getElementById('animPaperInner');
+    this.bottleSail = document.getElementById('bottleSail');
     this.bottleDone = document.getElementById('bottleDone');
     this.resetBtn = document.getElementById('resetBtn');
+    this.historyList = document.getElementById('historyList');
 
     // 字数统计
     this.worryInput.addEventListener('input', () => {
@@ -1465,19 +1643,8 @@ WA.bottle = {
     // 重置按钮
     this.resetBtn.addEventListener('click', () => this.reset());
 
-    // 恢复上一次的状态
-    this.restoreState();
-  },
-
-  restoreState() {
-    const savedText = WA.store.get('bottle_last', '');
-    const savedDone = WA.store.get('bottle_done', false);
-    if (savedDone && savedText) {
-      this.showDoneState(savedText);
-    } else if (savedText) {
-      this.worryInput.value = savedText;
-      this.charCount.textContent = savedText.length;
-    }
+    // 加载历史记录
+    this.renderHistory();
   },
 
   startAnimation(text) {
@@ -1489,66 +1656,94 @@ WA.bottle = {
 
     // 显示动画舞台
     this.animStage.classList.add('running');
-    this.animPaper.classList.remove('rolling', 'fly-to-bottle');
-    this.animBottle.classList.remove('catched', 'sailing');
-    this.animWaves.classList.remove('active');
 
     // 设置纸条内容
-    const shortText = text.length > 80 ? text.slice(0, 80) + '…' : text;
-    this.animPaperText.textContent = shortText;
-    this.animPaperText.style.opacity = '1';
-
-    // 重置动画元素
-    this.animPaper.style.opacity = '1';
-    this.animPaper.style.width = '170px';
-    this.animPaper.style.height = 'auto';
-    this.animPaper.style.borderRadius = '3px';
-    this.animPaper.style.top = '30px';
-    this.animBottle.style.opacity = '1';
-    this.animBottle.style.transform = 'translateX(-50%)';
+    const shortText = text.length > 100 ? text.slice(0, 100) + '…' : text;
+    this.animPaperInner.textContent = shortText;
+    this.animPaperNew.classList.remove('rolling');
+    this.animPaperNew.style.clipPath = '';
+    this.animPaperNew.style.opacity = '1';
+    this.animPaperNew.style.transform = 'scale(1)';
+    this.animPaperNew.style.borderRadius = '3px';
+    this.bottleSail.classList.remove('nod', 'sailing');
+    this.bottleSail.style.opacity = '1';
+    this.bottleSail.style.transform = 'translateX(-50%)';
 
     const section = document.querySelector('.bottle-section');
     const rect = section.getBoundingClientRect();
 
-    // ====== 动画时间线 ======
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + 180;
 
-    // 阶段1: 纸条慢慢卷起来（2.5秒）
+    // ====== 全新动画时间线 ======
+
+    // 阶段1: 纸条慢慢卷起来（2.8秒）
     setTimeout(() => {
-      this.animPaper.classList.add('rolling');
+      this.animPaperNew.classList.add('rolling');
       this.playCrinkle();
-    }, 200);
+    }, 300);
 
-    // 阶段2: 卷好的纸条飞进瓶子（3.0s时触发）
+    // 阶段2: 纸条卷完消失后，瓶子接住（3.5s）
     setTimeout(() => {
-      this.animPaper.classList.remove('rolling');
-      this.animPaper.classList.add('fly-to-bottle');
-      WA.spawnParticles(rect.left + rect.width / 2, rect.top + 210, '✨', 4);
-    }, 3000);
+      this.bottleSail.classList.add('nod');
+      WA.spawnParticles(cx, cy + 60, '✨', 5);
+    }, 3500);
 
-    // 阶段3: 瓶子接住纸条，晃一下（3.6s）
+    // 阶段3: 瓶子开始漂向大海（4.3s）
     setTimeout(() => {
-      this.animBottle.classList.add('catched');
-      WA.spawnParticles(rect.left + rect.width / 2, rect.top + 260, '💫', 3);
-    }, 3600);
+      this.bottleSail.classList.add('sailing');
+      WA.spawnParticles(cx + 60, cy + 80, '💧', 10);
+    }, 4300);
 
-    // 阶段4: 瓶子抛向大海（4.2s）
-    setTimeout(() => {
-      this.animWaves.classList.add('active');
-      this.animBottle.classList.add('sailing');
-      WA.spawnParticles(rect.left + rect.width / 2, rect.top + 220, '💧', 8);
-    }, 4200);
-
-    // 阶段5: 显示完成（7s）
+    // 阶段4: 显示完成，保存历史（7.5s）
     setTimeout(() => {
       this.showDoneState(text);
-    }, 7000);
+      this.saveHistory(text);
+      this.renderHistory();
+    }, 7500);
 
     // 发送邮件通知
     this.sendEmail(text);
 
-    // 保存状态
-    WA.store.set('bottle_last', text);
-    WA.store.set('bottle_done', true);
+    // 清空输入框状态（下次打开不恢复）
+    WA.store.set('bottle_last', '');
+    WA.store.set('bottle_done', false);
+  },
+
+  saveHistory(text) {
+    const history = WA.store.get('bottle_history', []);
+    history.push({
+      text: text,
+      time: new Date().toISOString(),
+    });
+    // 最多保留 50 条
+    if (history.length > 50) history.shift();
+    WA.store.set('bottle_history', history);
+  },
+
+  renderHistory() {
+    const history = WA.store.get('bottle_history', []);
+    if (history.length === 0) {
+      this.historyList.innerHTML = '<div style="color:#C8B4A4;text-align:center;font-size:0.85rem;">还没有丢过烦恼哦～</div>';
+      return;
+    }
+    this.historyList.innerHTML = history.slice().reverse().map(h => {
+      const d = new Date(h.time);
+      const dateStr = d.getFullYear() + '.' + (d.getMonth() + 1) + '.' + d.getDate() + ' '
+        + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      return `
+        <div class="history-item">
+          <div class="history-item-time">📅 ${dateStr}</div>
+          <div class="history-item-text">${this.escapeHtml(h.text)}</div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   },
 
   sendEmail(text) {
@@ -1558,9 +1753,7 @@ WA.bottle = {
         time: new Date().toLocaleString('zh-CN'),
         from: '温暖小站漂流瓶',
       });
-    } catch(e) {
-      // 静默失败，不影响用户体验
-    }
+    } catch(e) {}
   },
 
   showDoneState(text) {
@@ -1580,9 +1773,12 @@ WA.bottle = {
     this.bottleDone.style.display = 'none';
     this.worryInput.value = '';
     this.charCount.textContent = '0';
-    this.animPaper.classList.remove('rolling');
-    this.animBottle.classList.remove('catched', 'sailing');
-    this.animWaves.classList.remove('active');
+    this.animPaperNew.classList.remove('rolling');
+    this.animPaperNew.style.clipPath = '';
+    this.animPaperNew.style.opacity = '1';
+    this.animPaperNew.style.transform = 'scale(1)';
+    this.bottleSail.classList.remove('nod', 'sailing');
+    this.bottleSail.style.opacity = '1';
     WA.store.set('bottle_last', '');
     WA.store.set('bottle_done', false);
   },
@@ -1592,8 +1788,6 @@ WA.bottle = {
       const ctx = WA.muyu.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
       if (ctx.state === 'suspended') ctx.resume();
       const now = ctx.currentTime;
-
-      // 纸卷动的声音 — 短促的沙沙声
       const bufferSize = ctx.sampleRate * 0.3;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
@@ -1603,7 +1797,7 @@ WA.bottle = {
       const source = ctx.createBufferSource();
       source.buffer = buffer;
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.setValueAtTime(0.06, now);
       source.connect(gain);
       gain.connect(ctx.destination);
       source.start(now);
