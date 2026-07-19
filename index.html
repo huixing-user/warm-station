@@ -6,6 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <title>华仔の温暖小站 💕</title>
 <style>
 /* ===== RESET & VARS ===== */
@@ -783,6 +785,8 @@ function initBottleReRender() {
       <div class="admin-stat"><span class="admin-stat-label">戒指/包包(~1314)</span><span class="admin-stat-value">${ms.m1314?'✅已触发':'⏳未触发('+wc+'/~1314)'}</span></div>
       <div class="admin-title">🏆 中奖统计</div>
       ${[{name:'谢谢惠顾',icon:'😅'},{name:'华仔亲亲',icon:'😘'},{name:'爱的抱抱',icon:'🫂'},{name:'请喝奶茶',icon:'🧋'},{name:'请吃饭',icon:'🍽️'},{name:'买束花花',icon:'💐'},{name:'买Jellycat',icon:'🧸'},{name:'买包包/戒指',icon:'💍'}].map(p=>`<div class="admin-stat"><span class="admin-stat-label">${p.icon} ${p.name}</span><span class="admin-stat-value">${pc[p.name]||0} 次</span></div>`).join('')}
+      <div class="admin-title">💌 待回复的漂流瓶</div>
+      <div id="adminPendingReplies"><div style="color:#A0897B;text-align:center;padding:8px">加载中...</div></div>
       <div class="admin-title">📋 最近记录</div>
       <div style="max-height:200px;overflow-y:auto;font-size:0.8rem">${records.slice().reverse().slice(0,50).map(r=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F5E6D3"><span style="color:var(--brown);font-weight:500">${r.icon} ${r.prize}</span><span style="color:#A0897B">${W.fmtDate(r.time)}</span></div>`).join('')||'<div style="color:#A0897B;text-align:center;padding:10px">暂无</div>'}</div>
       <button class="admin-btn admin-btn-info" id="adminRefresh">🔄 刷新</button>
@@ -830,6 +834,32 @@ function initBottleReRender() {
 // ======================================================================
 W.init();
 try { emailjs.init('6XUHk-s379gqqS7dP'); } catch(_) {}
+
+// Firebase init
+try {
+  firebase.initializeApp({ databaseURL: 'https://warm-station-default-rtdb.firebaseio.com' });
+  window.firebaseDB = firebase.database();
+} catch(e) { console.warn('Firebase init failed'); }
+
+// Listen for replies from Firebase (auto-sync to her phone)
+(function initReplyListener() {
+  if (!window.firebaseDB) return;
+  window.firebaseDB.ref('replies').on('value', snapshot => {
+    const data = snapshot.val();
+    if (data) {
+      W.store.set('bottle_replies', data);
+      // re-render UI
+      try { initBottleReRender(); } catch(_) {}
+    }
+  });
+
+  // Initial load
+  window.firebaseDB.ref('replies').once('value').then(snapshot => {
+    const data = snapshot.val();
+    if (data) { W.store.set('bottle_replies', data); try { initBottleReRender(); } catch(_) {} }
+  });
+})();
+
 renderVouchers();
 </script>
 </body>
