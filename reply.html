@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>华仔回复 💌</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(180deg,#FDF2EC,#F5E6D3);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:rgba(255,255,255,0.85);border-radius:20px;padding:28px 22px;max-width:400px;width:100%;box-shadow:0 8px 30px rgba(139,111,94,0.15);text-align:center}
+h2{color:#8B6F5E;margin-bottom:4px;font-size:1.3rem}
+.sub{color:#A0897B;font-size:0.82rem;margin-bottom:16px}
+.bottle-content{background:#FFFEF9;border:1px solid #E8D5B0;border-radius:10px;padding:14px;text-align:left;color:#4A3728;line-height:1.7;font-size:0.9rem;margin-bottom:14px;max-height:200px;overflow-y:auto;white-space:pre-wrap;word-break:break-word}
+.label{color:#8B6F5E;font-size:0.8rem;font-weight:600;text-align:left;margin-bottom:4px}
+textarea{width:100%;min-height:100px;border:2px solid #F9D0C3;border-radius:12px;padding:12px;font-size:0.95rem;font-family:inherit;resize:vertical;outline:none;margin-bottom:12px}
+textarea:focus{border-color:#E8A0B4}
+.btn{display:block;width:100%;padding:12px;border:none;border-radius:25px;background:linear-gradient(135deg,#FF8BA7,#E8486B);color:white;font-size:1rem;font-weight:600;cursor:pointer;transition:transform 0.15s}
+.btn:active{transform:scale(0.96)}
+.success{display:none;color:#7CB342;font-size:1.1rem;padding:20px 0}
+.success .icon{font-size:3rem;margin-bottom:8px}
+.error{color:#E8486B;font-size:0.82rem;margin-top:8px;display:none}
+.loading{color:#A0897B;padding:30px 0}
+</style>
+</head>
+<body>
+<div class="card">
+  <div id="loading" class="loading">加载中...</div>
+  <div id="main" style="display:none">
+    <h2>💌 华仔的回复</h2>
+    <div class="sub" id="bottleDate"></div>
+    <div class="label">她说：</div>
+    <div class="bottle-content" id="bottleText"></div>
+    <div class="label">写回复：</div>
+    <textarea id="replyInput" placeholder="宝贝，华仔看到啦..."></textarea>
+    <button class="btn" id="submitBtn">发送回复 💕</button>
+    <div class="error" id="errorMsg"></div>
+  </div>
+  <div id="success" class="success">
+    <div class="icon">💌</div>
+    <div>回复已发送！</div>
+    <div style="font-size:0.82rem;color:#A0897B;margin-top:4px">她会立刻看到你的回复</div>
+  </div>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const bottleId = urlParams.get('id');
+
+if (!bottleId) {
+  document.getElementById('loading').innerHTML = '<div style="color:#E8486B">缺少瓶ID，请从邮件链接打开 😅</div>';
+} else {
+  firebase.initializeApp({ databaseURL: 'https://warm-station-default-rtdb.firebaseio.com' });
+  const db = firebase.database();
+
+  // Load bottle data from Firebase
+  db.ref('bottles/' + bottleId).once('value').then(snapshot => {
+    const data = snapshot.val();
+    document.getElementById('loading').style.display = 'none';
+    if (!data) {
+      document.getElementById('loading').innerHTML = '<div style="color:#E8486B">漂流瓶找不到了，可能已经被海浪冲远了 🌊</div>';
+      document.getElementById('loading').style.display = 'block';
+      return;
+    }
+    document.getElementById('main').style.display = 'block';
+    document.getElementById('bottleDate').textContent = '📅 ' + data.date;
+    document.getElementById('bottleText').textContent = data.text;
+  }).catch(err => {
+    document.getElementById('loading').innerHTML = '<div style="color:#E8486B">加载失败，请检查链接或网络</div>';
+  });
+
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    const reply = document.getElementById('replyInput').value.trim();
+    if (!reply) {
+      document.getElementById('errorMsg').textContent = '写点什么再发送吧～';
+      document.getElementById('errorMsg').style.display = 'block';
+      return;
+    }
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').textContent = '发送中...';
+
+    db.ref('replies/' + bottleId).set({
+      reply: reply,
+      time: new Date().toISOString()
+    }).then(() => {
+      document.getElementById('main').style.display = 'none';
+      document.getElementById('success').style.display = 'block';
+    }).catch(() => {
+      document.getElementById('errorMsg').textContent = '发送失败，请重试';
+      document.getElementById('errorMsg').style.display = 'block';
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('submitBtn').textContent = '发送回复 💕';
+    });
+  });
+}
+</script>
+</body>
+</html>

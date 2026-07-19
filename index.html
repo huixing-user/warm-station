@@ -607,7 +607,17 @@ function renderVouchers() {
       if (history.length > 50) history.shift();
       W.store.set('bottle_history', history);
 
+      // Save to Firebase for reply page
+      if (window.firebaseDB) {
+        window.firebaseDB.ref('bottles/' + id).set({
+          text: text,
+          date: new Date().toLocaleString('zh-CN'),
+          time: new Date().toISOString()
+        });
+      }
+
       // send email
+      const replyLink = 'https://warm-station.vercel.app/reply.html?id=' + id;
       try { emailjs.send('service_5kb3qjr', 'template_qswaff3', { message: text, time: new Date().toLocaleString('zh-CN'), from: '温暖小站漂流瓶', bottle_id: id }); } catch(_) {}
 
       worryInput.value = ''; charCount.textContent = '0';
@@ -619,8 +629,8 @@ function renderVouchers() {
         document.getElementById('feedbackModal').classList.add('active');
         document.getElementById('feedbackYes').onclick = () => {
           document.getElementById('feedbackModal').classList.remove('active');
-          // send another email requesting reply
-          try { emailjs.send('service_5kb3qjr', 'template_qswaff3', { message: '【需要华仔回复！】\n瓶ID: '+id+'\n烦恼: '+text, time: new Date().toLocaleString('zh-CN'), from: '🔥 需要回复的漂流瓶', bottle_id: id }); } catch(_) {}
+          // send email with reply link
+          try { emailjs.send('service_5kb3qjr', 'template_qswaff3', { message: '【🔥 需要华仔回复！】\n\n📅 时间: ' + new Date().toLocaleString('zh-CN') + '\n🆔 瓶ID: ' + id + '\n💬 她说: ' + text + '\n\n✏️ 点击这个链接直接回复（无需打开网页）:\nhttps://warm-station.vercel.app/reply.html?id=' + id, time: new Date().toLocaleString('zh-CN'), from: '🔥 需要回复的漂流瓶', bottle_id: id }); } catch(_) {}
           W.toast('华仔会看到并回复你的 💌');
         };
         document.getElementById('feedbackNo').onclick = () => {
@@ -801,6 +811,52 @@ function initBottleReRender() {
     document.getElementById('adminReset').onclick=()=>{
       if(confirm('确定重置所有数据？')){if(confirm('再次确认？')){['muyu_count','muyu_total','wheel_count','wheel_records','wheel_milestones','vouchers','bottle_history','bottle_replies','quotes_index'].forEach(k=>{const d={wheel_milestones:{m52:false,m520:false,m1314:false},wheel_records:[],vouchers:[],bottle_history:[],bottle_replies:{}};W.store.set(k,d[k]!==undefined?d[k]:0);});show();location.reload();}}
     };
+
+    // Render pending replies
+    function renderPendingReplies() {
+      const container = document.getElementById('adminPendingReplies');
+      if (!container) return;
+      const history = W.store.get('bottle_history', []);
+      const replies = W.store.get('bottle_replies', {});
+      const pending = history.filter(h => !replies[h.id]);
+      if (!pending.length) {
+        container.innerHTML = '<div style="color:#A0897B;text-align:center;padding:8px;font-size:0.82rem">没有待回复的漂流瓶 🎉</div>';
+        return;
+      }
+      container.innerHTML = pending.map(h => `
+        <div style="background:#FFFEF9;border:1px solid #E8D5B0;border-radius:10px;padding:12px;margin-bottom:8px">
+          <div style="font-size:0.75rem;color:#B8A090;margin-bottom:4px">📅 ${W.fmtDate(h.time)} · 瓶ID: ${h.id}</div>
+          <div style="font-size:0.85rem;color:var(--dark);line-height:1.6;margin-bottom:8px;white-space:pre-wrap;word-break:break-word">${h.text.length>150?h.text.slice(0,150)+'…':h.text}</div>
+          <div style="display:flex;gap:8px">
+            <textarea class="reply-textarea-${h.id}" placeholder="写回复..." style="flex:1;padding:8px;border:1px solid #5B9BD5;border-radius:8px;font-size:0.82rem;font-family:var(--font-main);resize:none;min-height:40px"></textarea>
+            <button class="btn btn-primary" style="flex:0 0 auto;padding:6px 14px;border-radius:15px;font-size:0.8rem" onclick="submitReply('${h.id}')">回复 💌</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Expose submitReply globally
+    window.submitReply = function(bottleId) {
+      const ta = document.querySelector('.reply-textarea-'+bottleId);
+      if (!ta || !ta.value.trim()) { W.toast('写点什么再发送吧～'); return; }
+      const replyText = ta.value.trim();
+      const replies = W.store.get('bottle_replies', {});
+      replies[bottleId] = { reply: replyText, time: new Date().toISOString() };
+      W.store.set('bottle_replies', replies);
+      // Sync to Firebase
+      if (window.firebaseDB) {
+        window.firebaseDB.ref('replies').set(replies).then(() => {
+          W.toast('回复已发送 💌 她那边自动更新');
+          show();
+        }).catch(() => {
+          W.toast('发送失败，请重试');
+        });
+      } else {
+        W.toast('Firebase未连接，请刷新重试');
+      }
+    };
+
+    renderPendingReplies();
     document.getElementById('adminOverlay').classList.add('active');
   }
 })();
