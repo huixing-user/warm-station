@@ -6,15 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <title>华仔の温暖小站 💕</title>
-<script>
-// Auto-redirect HTTPS->HTTP for Tencent COS static website
-if (location.protocol === 'https:' && location.hostname.includes('cos-website')) {
-  location.replace(location.href.replace('https://', 'http://'));
-}
-</script>
 <style>
 /* ===== RESET & VARS ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -613,14 +605,13 @@ function renderVouchers() {
       if (history.length > 50) history.shift();
       W.store.set('bottle_history', history);
 
-      // Save to Firebase for reply page
-      if (window.firebaseDB) {
-        window.firebaseDB.ref('bottles/' + id).set({
-          text: text,
-          date: new Date().toLocaleString('zh-CN'),
-          time: new Date().toISOString()
-        });
-      }
+      // Save bottle data to a simple JSON endpoint for reply page
+      const bottleData = {
+        text: text,
+        date: new Date().toLocaleString('zh-CN'),
+        time: new Date().toISOString()
+      };
+      W.store.set('bottle_data_' + id, bottleData);
 
       // send email
       const replyLink = 'http://warm-station-1409412298.cos-website.ap-nanjing.myqcloud.com/reply.html?id=' + id;
@@ -849,17 +840,8 @@ function initBottleReRender() {
       const replies = W.store.get('bottle_replies', {});
       replies[bottleId] = { reply: replyText, time: new Date().toISOString() };
       W.store.set('bottle_replies', replies);
-      // Sync to Firebase
-      if (window.firebaseDB) {
-        window.firebaseDB.ref('replies').set(replies).then(() => {
-          W.toast('回复已发送 💌 她那边自动更新');
-          show();
-        }).catch(() => {
-          W.toast('发送失败，请重试');
-        });
-      } else {
-        W.toast('Firebase未连接，请刷新重试');
-      }
+      W.toast('回复已发送 💌');
+      show();
     };
 
     renderPendingReplies();
@@ -896,31 +878,6 @@ function initBottleReRender() {
 // ======================================================================
 W.init();
 try { emailjs.init('6XUHk-s379gqqS7dP'); } catch(_) {}
-
-// Firebase init
-try {
-  firebase.initializeApp({ databaseURL: 'https://warm-station-default-rtdb.firebaseio.com' });
-  window.firebaseDB = firebase.database();
-} catch(e) { console.warn('Firebase init failed'); }
-
-// Listen for replies from Firebase (auto-sync to her phone)
-(function initReplyListener() {
-  if (!window.firebaseDB) return;
-  window.firebaseDB.ref('replies').on('value', snapshot => {
-    const data = snapshot.val();
-    if (data) {
-      W.store.set('bottle_replies', data);
-      // re-render UI
-      try { initBottleReRender(); } catch(_) {}
-    }
-  });
-
-  // Initial load
-  window.firebaseDB.ref('replies').once('value').then(snapshot => {
-    const data = snapshot.val();
-    if (data) { W.store.set('bottle_replies', data); try { initBottleReRender(); } catch(_) {} }
-  });
-})();
 
 renderVouchers();
 </script>

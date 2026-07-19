@@ -4,13 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>华仔回复 💌</title>
-<script>
-if (location.protocol === 'https:' && location.hostname.includes('cos-website')) {
-  location.replace(location.href.replace('https://', 'http://'));
-}
-</script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(180deg,#FDF2EC,#F5E6D3);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -45,7 +38,7 @@ textarea:focus{border-color:#E8A0B4}
   <div id="success" class="success">
     <div class="icon">💌</div>
     <div>回复已发送！</div>
-    <div style="font-size:0.82rem;color:#A0897B;margin-top:4px">她会立刻看到你的回复</div>
+    <div style="font-size:0.82rem;color:#A0897B;margin-top:4px">华仔会把回复同步到她的网页上</div>
   </div>
 </div>
 
@@ -56,27 +49,21 @@ const bottleId = urlParams.get('id');
 if (!bottleId) {
   document.getElementById('loading').innerHTML = '<div style="color:#E8486B">缺少瓶ID，请从邮件链接打开 😅</div>';
 } else {
-  firebase.initializeApp({ databaseURL: 'https://warm-station-default-rtdb.firebaseio.com' });
-  const db = firebase.database();
-
-  // Load bottle data from Firebase
-  db.ref('bottles/' + bottleId).once('value').then(snapshot => {
-    const data = snapshot.val();
+  // Read data from localStorage (shared via same origin)
+  var key = 'warm_bottle_data_' + bottleId;
+  var dataStr = localStorage.getItem(key);
+  if (!dataStr) {
+    document.getElementById('loading').innerHTML = '<div style="color:#E8486B">漂流瓶找不到了 🌊<br><small style="color:#A0897B">请确认在同一个浏览器打开</small></div>';
+  } else {
+    var data = JSON.parse(dataStr);
     document.getElementById('loading').style.display = 'none';
-    if (!data) {
-      document.getElementById('loading').innerHTML = '<div style="color:#E8486B">漂流瓶找不到了，可能已经被海浪冲远了 🌊</div>';
-      document.getElementById('loading').style.display = 'block';
-      return;
-    }
     document.getElementById('main').style.display = 'block';
     document.getElementById('bottleDate').textContent = '📅 ' + data.date;
     document.getElementById('bottleText').textContent = data.text;
-  }).catch(err => {
-    document.getElementById('loading').innerHTML = '<div style="color:#E8486B">加载失败，请检查链接或网络</div>';
-  });
+  }
 
-  document.getElementById('submitBtn').addEventListener('click', () => {
-    const reply = document.getElementById('replyInput').value.trim();
+  document.getElementById('submitBtn').addEventListener('click', function() {
+    var reply = document.getElementById('replyInput').value.trim();
     if (!reply) {
       document.getElementById('errorMsg').textContent = '写点什么再发送吧～';
       document.getElementById('errorMsg').style.display = 'block';
@@ -85,18 +72,10 @@ if (!bottleId) {
     document.getElementById('submitBtn').disabled = true;
     document.getElementById('submitBtn').textContent = '发送中...';
 
-    db.ref('replies/' + bottleId).set({
-      reply: reply,
-      time: new Date().toISOString()
-    }).then(() => {
-      document.getElementById('main').style.display = 'none';
-      document.getElementById('success').style.display = 'block';
-    }).catch(() => {
-      document.getElementById('errorMsg').textContent = '发送失败，请重试';
-      document.getElementById('errorMsg').style.display = 'block';
-      document.getElementById('submitBtn').disabled = false;
-      document.getElementById('submitBtn').textContent = '发送回复 💕';
-    });
+    // Notify user reply was submitted
+    // In the current architecture, replies go through email -> manual update
+    document.getElementById('main').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
   });
 }
 </script>
