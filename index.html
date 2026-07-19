@@ -9,6 +9,12 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <title>华仔の温暖小站 💕</title>
+<script>
+// Auto-redirect HTTPS->HTTP for Tencent COS static website
+if (location.protocol === 'https:' && location.hostname.includes('cos-website')) {
+  location.replace(location.href.replace('https://', 'http://'));
+}
+</script>
 <style>
 /* ===== RESET & VARS ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -617,7 +623,7 @@ function renderVouchers() {
       }
 
       // send email
-      const replyLink = 'https://warm-station.vercel.app/reply.html?id=' + id;
+      const replyLink = 'http://warm-station-1409412298.cos-website.ap-nanjing.myqcloud.com/reply.html?id=' + id;
       try { emailjs.send('service_5kb3qjr', 'template_qswaff3', { message: text, time: new Date().toLocaleString('zh-CN'), from: '温暖小站漂流瓶', bottle_id: id }); } catch(_) {}
 
       worryInput.value = ''; charCount.textContent = '0';
@@ -630,7 +636,7 @@ function renderVouchers() {
         document.getElementById('feedbackYes').onclick = () => {
           document.getElementById('feedbackModal').classList.remove('active');
           // send email with reply link
-          try { emailjs.send('service_5kb3qjr', 'template_qswaff3', { message: '【🔥 需要华仔回复！】\n\n📅 时间: ' + new Date().toLocaleString('zh-CN') + '\n🆔 瓶ID: ' + id + '\n💬 她说: ' + text + '\n\n✏️ 点击这个链接直接回复（无需打开网页）:\nhttps://warm-station.vercel.app/reply.html?id=' + id, time: new Date().toLocaleString('zh-CN'), from: '🔥 需要回复的漂流瓶', bottle_id: id }); } catch(_) {}
+          try { emailjs.send('service_5kb3qjr', 'template_qswaff3', { message: '【🔥 需要华仔回复！】\n\n📅 时间: ' + new Date().toLocaleString('zh-CN') + '\n🆔 瓶ID: ' + id + '\n💬 她说: ' + text + '\n\n✏️ 点击这个链接直接回复:\nhttp://warm-station-1409412298.cos-website.ap-nanjing.myqcloud.com/reply.html?id=' + id, time: new Date().toLocaleString('zh-CN'), from: '🔥 需要回复的漂流瓶', bottle_id: id }); } catch(_) {}
           W.toast('华仔会看到并回复你的 💌');
         };
         document.getElementById('feedbackNo').onclick = () => {
