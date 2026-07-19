@@ -8,1947 +8,829 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <title>华仔の温暖小站 💕</title>
 <style>
-/* ===== CSS Reset & Variables ===== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --pink: #F9D0C3;
-  --cream: #F5E6D3;
-  --gold: #F0E6D8;
-  --deep-pink: #E8A0B4;
-  --brown: #8B6F5E;
-  --dark: #4A3728;
-  --white: #FFFBF7;
-  --card-shadow: 0 4px 20px rgba(139, 111, 94, 0.12);
-  --radius: 20px;
-  --font-main: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-}
-
-html { font-size: 16px; scroll-behavior: smooth; }
-body {
-  font-family: var(--font-main);
-  background: linear-gradient(180deg, #FDF2EC 0%, var(--cream) 30%, #FDF2EC 60%, var(--pink) 100%);
-  background-attachment: fixed;
-  min-height: 100vh;
-  color: var(--dark);
-  display: flex;
-  justify-content: center;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-user-select: none;
-  user-select: none;
-  overflow-x: hidden;
-}
-
-#app {
-  width: 100%;
-  max-width: 480px;
-  padding: 0 20px 60px;
-  position: relative;
-  z-index: 1;
-}
-
-/* ===== Hero 区 ===== */
-.hero {
-  text-align: center;
-  padding: 36px 20px 20px;
-  position: relative;
-}
-
-.hero-hearts {
-  font-size: 1.3rem;
-  margin-bottom: 4px;
-  letter-spacing: 6px;
-  animation: floatHearts 3s ease-in-out infinite;
-}
-
-@keyframes floatHearts {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-.hero-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--brown);
-  letter-spacing: 2px;
-  font-family: "Georgia", "STSong", "Songti SC", serif;
-  cursor: pointer;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.hero-subtitle {
-  font-size: 0.95rem;
-  color: #A0897B;
-  margin-top: 8px;
-  font-style: italic;
-  min-height: 24px;
-  transition: opacity 0.5s;
-}
-
-/* ===== Section 通用样式 ===== */
-.section {
-  margin: 16px 0;
-  padding: 24px 20px;
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: var(--radius);
-  box-shadow: var(--card-shadow);
-}
-
-.section-title {
-  text-align: center;
-  font-size: 1.05rem;
-  color: var(--brown);
-  margin-bottom: 16px;
-  font-weight: 600;
-  letter-spacing: 1px;
-}
-
-/* ===== 弹窗/Modal 通用 ===== */
-.modal-overlay {
-  display: none;
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-.modal-overlay.active { display: flex; }
-
-.modal-box {
-  background: var(--white);
-  border-radius: var(--radius);
-  padding: 32px 24px;
-  max-width: 340px; width: 90%;
-  text-align: center;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
-  animation: modalIn 0.3s ease-out;
-}
-
-@keyframes modalIn {
-  from { transform: scale(0.85); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-.modal-close {
-  margin-top: 14px;
-  padding: 10px 32px;
-  border: none; border-radius: 25px;
-  background: var(--deep-pink);
-  color: white; font-size: 1rem;
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
-  -webkit-tap-highlight-color: transparent;
-}
-.modal-close:active { transform: scale(0.95); }
-
-/* ===== 粒子容器 ===== */
-.particles-container {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  pointer-events: none; z-index: 999;
-}
-
-/* ===== 飘落花瓣 ===== */
-.petal {
-  position: fixed;
-  pointer-events: none;
-  z-index: 0;
-  animation: petalFall linear forwards;
-}
-
-@keyframes petalFall {
-  0%   { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0.7; }
-  25%  { transform: translateY(25vh) rotate(90deg) translateX(35px); }
-  50%  { transform: translateY(50vh) rotate(180deg) translateX(-25px); }
-  75%  { transform: translateY(75vh) rotate(270deg) translateX(30px); opacity: 0.3; }
-  100% { transform: translateY(105vh) rotate(360deg) translateX(-15px); opacity: 0; }
-}
-
-/* ===== Toast ===== */
-.toast-msg {
-  position: fixed; top: 18%; left: 50%; transform: translateX(-50%);
-  background: rgba(74, 55, 40, 0.92); color: #FFFBF7; padding: 14px 28px;
-  border-radius: 30px; font-size: 1rem; z-index: 2000;
-  animation: toastIn 0.4s ease-out, toastOut 0.4s 2.2s ease-in forwards;
-  pointer-events: none; text-align: center; max-width: 90vw;
-  font-family: var(--font-main);
-  letter-spacing: 0.5px;
-}
-@keyframes toastIn  { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-@keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
-
-@keyframes particleUp {
-  0%   { opacity: 1; transform: translateY(0) translateX(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-80px) translateX(var(--dx, 20px)) scale(0.3); }
-}
-
-/* ===== 木鱼区 ===== */
-.muyu-container {
-  display: flex;
-  justify-content: center;
-  padding: 10px 0 6px;
-}
-
-.muyu-stand {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-}
-
-.muyu-cushion {
-  width: 160px; height: 26px;
-  background: radial-gradient(ellipse at center, #D4A98A 0%, #9B6B4A 100%);
-  border-radius: 50%;
-  margin-bottom: -10px;
-  z-index: 1;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.muyu-body {
-  width: 130px; height: 130px;
-  background: radial-gradient(circle at 45% 40%, #E0B878 0%, #C4854A 35%, #9B5F35 100%);
-  border-radius: 50%;
-  position: relative;
-  box-shadow: 0 8px 30px rgba(139, 87, 48, 0.35), inset 0 -5px 10px rgba(0,0,0,0.15), inset 0 3px 6px rgba(255,255,255,0.1);
-  transition: transform 0.1s ease-out;
-  z-index: 2;
-}
-
-.muyu-body:active,
-.muyu-body.pressed {
-  transform: scale(0.91) translateY(8px);
-  box-shadow: 0 2px 8px rgba(139, 87, 48, 0.3), inset 0 -2px 4px rgba(0,0,0,0.2);
-  transition: transform 0.06s ease-out;
-}
-
-.muyu-groove {
-  position: absolute;
-  top: 20px; left: 50%;
-  transform: translateX(-50%);
-  width: 54px; height: 6px;
-  background: rgba(0,0,0,0.18);
-  border-radius: 3px;
-  box-shadow: 0 1px 2px rgba(255,255,255,0.15);
-}
-
-.muyu-fish {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 38px; height: 26px;
-  background: rgba(0,0,0,0.07);
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.muyu-fish::after {
-  content: '🐟';
-  font-size: 14px;
-  opacity: 0.45;
-}
-
-.muyu-amount {
-  text-align: center;
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: var(--brown);
-  margin-top: 14px;
-  font-family: "Georgia", "STSong", "Songti SC", serif;
-  transition: transform 0.15s ease-out;
-}
-
-.muyu-amount.bump {
-  animation: amountBump 0.35s ease-out;
-}
-
-@keyframes amountBump {
-  0%   { transform: scale(1); }
-  25%  { transform: scale(1.25); color: var(--deep-pink); }
-  100% { transform: scale(1); }
-}
-
-.muyu-hint {
-  text-align: center;
-  font-size: 0.8rem;
-  color: #C0A894;
-  margin-top: 8px;
-  letter-spacing: 0.5px;
-}
-
-/* ===== 转盘 ===== */
-.wheel-wrapper {
-  position: relative;
-  width: 300px; height: 300px;
-  margin: 0 auto;
-}
-
-.wheel-pointer {
-  position: absolute;
-  top: -12px; left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.8rem;
-  color: #E8486B;
-  z-index: 10;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-  animation: pointerBounce 1s ease-in-out infinite;
-}
-
-@keyframes pointerBounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(5px); }
-}
-
-#wheelCanvas {
-  display: block;
-  width: 300px; height: 300px;
-  border-radius: 50%;
-}
-
-.wheel-btn {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 66px; height: 66px;
-  border-radius: 50%;
-  border: 4px solid var(--white);
-  background: linear-gradient(135deg, #FF6B8A, #E8486B);
-  color: white;
-  font-size: 1.35rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 18px rgba(232, 72, 107, 0.4);
-  z-index: 5;
-  transition: transform 0.1s;
-  letter-spacing: 1px;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.wheel-btn:active {
-  transform: translate(-50%, -50%) scale(0.88);
-}
-
-.wheel-btn:disabled {
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-.wheel-counter {
-  text-align: center;
-  color: #B0A090;
-  font-size: 0.85rem;
-  margin-top: 12px;
-}
-
-/* ===== 照片墙 ===== */
-.photo-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.photo-card {
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 3px 14px rgba(139, 111, 94, 0.1);
-  background: var(--white);
-  transition: transform 0.2s;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.photo-card:active {
-  transform: scale(0.95);
-}
-
-.photo-card img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  display: block;
-}
-
-.photo-caption {
-  padding: 8px 10px;
-  font-size: 0.76rem;
-  color: #A0897B;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#photoOverlay { cursor: pointer; }
-
-/* ===== 暖心话语 ===== */
-.quote-card {
-  text-align: center;
-  padding: 22px 18px;
-  background: linear-gradient(135deg, #FFF7F2 0%, #FFEFE6 100%);
-  border-radius: 14px;
-  border: 1px solid rgba(232, 160, 180, 0.2);
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  min-height: 80px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.quote-card:active {
-  transform: scale(0.96);
-}
-
-.quote-text {
-  font-size: 1.08rem;
-  color: var(--brown);
-  line-height: 1.8;
-  font-family: "Georgia", "STSong", "Songti SC", serif;
-  transition: opacity 0.3s;
-}
-
-.quote-text.fade { opacity: 0; }
-
-.quote-hint {
-  font-size: 0.72rem;
-  color: #C8B4A4;
-  margin-top: 10px;
-}
-
-/* ===== 烦恼漂流瓶 ===== */
-.bottle-stage {
-  position: relative;
-  min-height: 260px;
-}
-
-/* 阶段0 — 便签 */
-.note-wrapper {
-  position: relative;
-  background: linear-gradient(180deg, #FFFEF9 0%, #FFF9E8 50%, #FFFEF9 100%);
-  border: 1px solid #E8D5B0;
-  border-radius: 4px;
-  padding: 20px 16px 36px 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  margin-bottom: 14px;
-}
-
-.note-lines {
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background: repeating-linear-gradient(
-    180deg,
-    transparent,
-    transparent 27px,
-    #E8D5B0 27px,
-    #E8D5B0 28px
-  );
-  pointer-events: none;
-  border-radius: 4px;
-}
-
-.note-textarea {
-  position: relative; z-index: 1;
-  width: 100%; min-height: 140px;
-  background: transparent; border: none;
-  font-size: 0.95rem; line-height: 28px;
-  font-family: "Georgia", "STKaiti", "KaiTi", serif;
-  color: #4A3728; resize: none; outline: none;
-}
-
-.note-textarea::placeholder { color: #C8B4A4; font-style: italic; }
-
-.note-char-count {
-  position: relative; z-index: 1;
-  text-align: right; font-size: 0.72rem;
-  color: #C8B4A4; margin-top: 4px;
-}
-
-.toss-btn {
-  display: block; width: 100%;
-  padding: 12px;
-  border: none; border-radius: 25px;
-  background: linear-gradient(135deg, #5B9BD5, #3B7DC4);
-  color: white; font-size: 1rem; font-family: var(--font-main);
-  cursor: pointer; transition: transform 0.15s;
-  -webkit-tap-highlight-color: transparent;
-}
-.toss-btn:active { transform: scale(0.97); }
-
-.toss-btn-reset {
-  background: linear-gradient(135deg, var(--deep-pink), #D4889A);
-}
-
-/* ===== 全新海洋动画舞台 ===== */
-.bottle-anim-stage {
-  display: none;
-  position: relative; height: 380px;
-  overflow: hidden;
-  border-radius: 14px;
-  background: linear-gradient(180deg,
-    #87CEEB 0%,    /* 天空 */
-    #B8E0F0 25%,
-    #D4EEF7 40%,   /* 海天交接 */
-    #5BADD5 50%,   /* 浅海 */
-    #3D8FBF 70%,   /* 深海 */
-    #1B5E8A 100%
-  );
-}
-
-.bottle-anim-stage.running { display: block; }
-
-/* 天空元素 */
-.ocean-sky {
-  position: absolute; top: 0; left: 0; right: 0; height: 55%;
-  overflow: hidden;
-}
-
-.sun {
-  position: absolute;
-  top: 12px; right: 30px;
-  width: 45px; height: 45px;
-  background: radial-gradient(circle, #FFF3C4 0%, #FFD166 40%, #F0A030 100%);
-  border-radius: 50%;
-  box-shadow: 0 0 30px rgba(255, 209, 102, 0.6), 0 0 60px rgba(255, 180, 80, 0.3);
-  animation: sunGlow 3s ease-in-out infinite;
-}
-
-@keyframes sunGlow {
-  0%, 100% { box-shadow: 0 0 25px rgba(255, 209, 102, 0.5), 0 0 50px rgba(255, 180, 80, 0.25); }
-  50% { box-shadow: 0 0 40px rgba(255, 209, 102, 0.8), 0 0 80px rgba(255, 180, 80, 0.4); }
-}
-
-.cloud {
-  position: absolute;
-  background: white;
-  border-radius: 50px;
-  opacity: 0.85;
-}
-
-.cloud::before, .cloud::after {
-  content: '';
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-}
-
-.cloud1 {
-  width: 70px; height: 22px;
-  top: 25px; left: 15%;
-  animation: cloudDrift1 20s linear infinite;
-}
-.cloud1::before { width: 30px; height: 30px; top: -15px; left: 15px; }
-.cloud1::after { width: 22px; height: 22px; top: -10px; left: 40px; }
-
-.cloud2 {
-  width: 50px; height: 16px;
-  top: 55px; left: 55%;
-  animation: cloudDrift2 25s linear infinite;
-}
-.cloud2::before { width: 22px; height: 22px; top: -12px; left: 10px; }
-.cloud2::after { width: 16px; height: 16px; top: -8px; left: 28px; }
-
-.cloud3 {
-  width: 60px; height: 18px;
-  top: 70px; left: 80%;
-  animation: cloudDrift1 18s linear infinite;
-  animation-delay: -8s;
-}
-.cloud3::before { width: 26px; height: 26px; top: -14px; left: 12px; }
-.cloud3::after { width: 18px; height: 18px; top: -9px; left: 35px; }
-
-@keyframes cloudDrift1 {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-120px); }
-}
-@keyframes cloudDrift2 {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-80px); }
-}
-
-.birds {
-  position: absolute;
-  top: 40px; right: 120px;
-  font-size: 0.8rem; letter-spacing: 6px;
-  animation: birdFly 4s ease-in-out infinite;
-}
-
-@keyframes birdFly {
-  0%, 100% { transform: translateX(0) translateY(0); }
-  25% { transform: translateX(-20px) translateY(-8px); }
-  50% { transform: translateX(-40px) translateY(0); }
-  75% { transform: translateX(-60px) translateY(-5px); }
-}
-
-/* 海面 */
-.ocean-surface {
-  position: absolute; top: 44%; left: 0; right: 0; bottom: 0;
-  overflow: hidden;
-}
-
-.wave {
-  position: absolute;
-  left: -10%; width: 120%;
-  border-radius: 40%;
-  opacity: 0.6;
-}
-
-.wave1 {
-  top: 2px; height: 40px;
-  background: rgba(100, 180, 220, 0.5);
-  animation: waveRoll 4s ease-in-out infinite;
-}
-.wave2 {
-  top: 14px; height: 45px;
-  background: rgba(70, 150, 200, 0.45);
-  animation: waveRoll 5s ease-in-out infinite reverse;
-}
-.wave3 {
-  top: 28px; height: 50px;
-  background: rgba(40, 120, 180, 0.4);
-  animation: waveRoll 6s ease-in-out infinite;
-}
-
-@keyframes waveRoll {
-  0%, 100% { transform: translateX(-3%) rotate(0deg); }
-  25% { transform: translateX(3%) rotate(1deg); }
-  50% { transform: translateX(-2%) rotate(0deg); }
-  75% { transform: translateX(2%) rotate(-1deg); }
-}
-
-/* 卷纸动画 */
-.paper-roll-stage {
-  position: absolute;
-  top: 15%; left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-}
-
-.anim-paper-new {
-  width: 160px;
-  background: linear-gradient(180deg, #FFFEF9 0%, #FFF9E8 100%);
-  border: 1px solid #D4C5A0;
-  border-radius: 3px;
-  padding: 16px 14px;
-  font-family: "STKaiti", "KaiTi", serif;
-  font-size: 0.78rem;
-  color: #4A3728;
-  line-height: 1.7;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  transform-origin: bottom center;
-  transition: none;
-}
-
-.anim-paper-new::after {
-  content: '';
-  position: absolute;
-  bottom: 0; right: 0;
-  border-width: 0 0 20px 20px;
-  border-style: solid;
-  border-color: transparent transparent #E8D5B0 transparent;
-}
-
-.anim-paper-new.rolling {
-  animation: rollUp 2.8s cubic-bezier(0.22, 0.05, 0.36, 1) forwards;
-}
-
-@keyframes rollUp {
-  0% {
-    transform: scale(1);
-    border-radius: 3px;
-  }
-  20% {
-    transform: scale(0.95) rotate(-1deg);
-  }
-  35% {
-    /* 下边缘开始卷 */
-    clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 92% 90%, 85% 85%, 92% 88%, 85% 84%, 92% 87%, 0% 85%);
-    transform: scale(0.9) rotate(1deg);
-  }
-  50% {
-    clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 85% 78%, 70% 72%, 85% 76%, 70% 70%, 85% 75%, 0% 70%);
-    transform: scale(0.85) rotate(-1.5deg);
-    border-radius: 8px;
-  }
-  65% {
-    clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 80% 58%, 65% 52%, 80% 56%, 65% 50%, 0% 50%);
-    transform: scale(0.78) rotate(2deg);
-    border-radius: 20px;
-  }
-  80% {
-    clip-path: polygon(0% 0%, 100% 0%, 100% 30%, 50% 35%, 0% 30%);
-    transform: scale(0.7) rotate(-1deg);
-    border-radius: 25px;
-  }
-  95% {
-    clip-path: polygon(0% 0%, 100% 0%, 100% 12%, 50% 14%, 0% 12%);
-    transform: scale(0.6);
-    border-radius: 30px;
-    opacity: 0.7;
-  }
-  100% {
-    clip-path: polygon(0% 0%, 100% 0%, 100% 8%, 50% 10%, 0% 8%);
-    transform: scale(0.5);
-    border-radius: 30px;
-    opacity: 0;
-  }
-}
-
-/* 瓶子 */
-.bottle-sail {
-  position: absolute;
-  bottom: 12%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 3.5rem;
-  z-index: 8;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.2));
-  transition: none;
-}
-
-.bottle-sail.nod {
-  animation: bottleNod 0.5s ease-out;
-}
-
-@keyframes bottleNod {
-  0% { transform: translateX(-50%) scale(1); }
-  40% { transform: translateX(-50%) scale(1.18) rotate(5deg); }
-  70% { transform: translateX(-50%) scale(1.05) rotate(-3deg); }
-  100% { transform: translateX(-50%) scale(1.08); }
-}
-
-.bottle-sail.sailing {
-  animation: sailAway 3s ease-in-out forwards;
-}
-
-@keyframes sailAway {
-  0% {
-    transform: translate(-50%, 0) rotate(0deg);
-    opacity: 1;
-  }
-  10% {
-    transform: translate(-45%, -5px) rotate(3deg);
-    opacity: 1;
-  }
-  25% {
-    transform: translate(-55%, -15px) rotate(-5deg);
-    opacity: 0.9;
-  }
-  40% {
-    transform: translate(-40%, -25px) rotate(7deg);
-    opacity: 0.75;
-  }
-  60% {
-    transform: translate(20px, -40px) rotate(-8deg);
-    opacity: 0.5;
-  }
-  80% {
-    transform: translate(120px, -60px) rotate(12deg);
-    opacity: 0.2;
-  }
-  100% {
-    transform: translate(350px, -90px) rotate(20deg);
-    opacity: 0;
-  }
-}
-
-/* 阶段2 — 完成 */
-.bottle-done {
-  display: none;
-  text-align: center;
-  padding: 30px 10px;
-}
-
-.bottle-done.show { display: block; }
-
-.done-icon { font-size: 3.5rem; margin-bottom: 12px; animation: floatHearts 3s ease-in-out infinite; }
-.done-text { font-size: 1.15rem; color: var(--brown); font-weight: 600; margin-bottom: 6px; }
-.done-sub { font-size: 0.85rem; color: #A0897B; margin-bottom: 20px; }
-
-/* 历史记录 */
-.bottle-history {
-  margin-top: 18px;
-  border-top: 1px solid #F0E6D8;
-  padding-top: 14px;
-}
-
-.history-title {
-  font-size: 0.95rem;
-  color: var(--brown);
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.history-list {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.history-item {
-  background: linear-gradient(135deg, #FFFEF9, #FFF5E8);
-  border: 1px solid #EDE0CC;
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  position: relative;
-}
-
-.history-item-time {
-  font-size: 0.75rem;
-  color: #B8A090;
-  margin-bottom: 6px;
-}
-
-.history-item-text {
-  font-size: 0.9rem;
-  color: #4A3728;
-  line-height: 1.7;
-  white-space: pre-wrap;
-  word-break: break-word;
-  font-family: "STKaiti", "KaiTi", serif;
-}
-
-.history-empty {
-  text-align: center;
-  color: #C8B4A4;
-  font-size: 0.88rem;
-  padding: 20px 0;
-}
-
-/* ===== 管理面板 ===== */
-.admin-overlay {
-  display: none;
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 2000;
-  justify-content: center;
-  align-items: center;
-}
-.admin-overlay.active { display: flex; }
-
-.admin-panel {
-  background: var(--white);
-  border-radius: var(--radius);
-  width: 92%;
-  max-width: 440px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.25);
-  animation: modalIn 0.3s ease-out;
-}
-
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid #F0E6D8;
-  position: sticky; top: 0;
-  background: var(--white);
-  z-index: 1;
-  border-radius: var(--radius) var(--radius) 0 0;
-}
-
-.admin-header h2 {
-  font-size: 1.1rem;
-  color: var(--brown);
-}
-
-.admin-close {
-  background: none; border: none;
-  font-size: 1.4rem; color: #A0897B;
-  cursor: pointer; padding: 4px 10px;
-  border-radius: 8px;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.admin-body {
-  padding: 16px 20px 24px;
-}
-
-.admin-stat {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #F5E6D3;
-  font-size: 0.88rem;
-}
-
-.admin-stat-label { color: #A0897B; }
-.admin-stat-value { color: var(--brown); font-weight: 600; }
-
-.admin-section-title {
-  font-size: 0.95rem;
-  color: var(--brown);
-  font-weight: 600;
-  margin: 18px 0 8px;
-}
-
-.admin-records {
-  max-height: 200px;
-  overflow-y: auto;
-  font-size: 0.8rem;
-}
-
-.admin-record {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  border-bottom: 1px solid #F5E6D3;
-  color: #A0897B;
-}
-
-.admin-record-prize { color: var(--brown); font-weight: 500; }
-
-.admin-btn {
-  display: block;
-  width: 100%;
-  margin-top: 10px;
-  padding: 11px;
-  border: none; border-radius: 20px;
-  font-size: 0.9rem; font-family: var(--font-main);
-  cursor: pointer;
-  transition: transform 0.1s;
-  -webkit-tap-highlight-color: transparent;
-}
-.admin-btn:active { transform: scale(0.97); }
-
-.admin-btn-danger { background: #FFE8E8; color: #C0392B; }
-.admin-btn-info  { background: #EAF0FB; color: #2C5282; }
-
-#pwdInput:focus { border-color: var(--deep-pink); }
+/* ===== RESET & VARS ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink:#F9D0C3;--cream:#F5E6D3;--gold:#F0E6D8;--deep-pink:#E8A0B4;
+  --brown:#8B6F5E;--dark:#4A3728;--white:#FFFBF7;
+  --card-shadow:0 4px 20px rgba(139,111,94,0.12);--radius:20px;
+  --font-main:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+}
+html{font-size:16px;overflow:hidden;height:100%}
+body{
+  font-family:var(--font-main);background:linear-gradient(180deg,#FDF2EC 0%,#F5E6D3 50%,#FDF2EC 100%);
+  background-attachment:fixed;height:100vh;color:var(--dark);
+  display:flex;flex-direction:column;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;
+}
+#app{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 0 70px;-webkit-overflow-scrolling:touch}
+
+/* ===== PAGES ===== */
+.page{display:none;padding:16px 16px 24px;max-width:600px;margin:0 auto}
+.page.active{display:block}
+
+/* ===== HERO ===== */
+.hero{text-align:center;padding:30px 16px 10px}
+.hero-hearts{font-size:1.3rem;letter-spacing:6px;animation:floatHearts 3s ease-in-out infinite}
+.hero-title{font-size:1.7rem;font-weight:700;color:var(--brown);letter-spacing:2px;font-family:Georgia,"STSong",serif;margin:6px 0}
+.hero-subtitle{font-size:0.9rem;color:#A0897B;font-style:italic}
+@keyframes floatHearts{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* ===== CARDS ===== */
+.card{
+  background:rgba(255,255,255,0.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-radius:var(--radius);box-shadow:0 4px 20px rgba(139,111,94,0.08);padding:20px;margin:12px 0
+}
+.card-title{font-size:1rem;color:var(--brown);font-weight:600;margin-bottom:12px;text-align:center}
+
+/* ===== BOTTOM NAV ===== */
+.nav-bar{
+  position:fixed;bottom:0;left:0;right:0;height:64px;
+  background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:flex;justify-content:space-around;align-items:center;
+  border-top:1px solid rgba(0,0,0,0.06);z-index:500;padding-bottom:env(safe-area-inset-bottom,0)
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 10px;
+  cursor:pointer;font-size:0.68rem;color:#B8A090;transition:color 0.2s;-webkit-tap-highlight-color:transparent
+}
+.nav-item.active{color:#E8486B}
+.nav-icon{font-size:1.4rem}
+.nav-badge{position:absolute;top:0;right:-4px;background:#E8486B;color:white;font-size:0.6rem;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.nav-badge-hidden{display:none}
+
+/* ===== MUYU ===== */
+.muyu-wrap{display:flex;flex-direction:column;align-items:center;padding:10px 0}
+.muyu-stand{position:relative;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.muyu-cushion{width:150px;height:24px;background:radial-gradient(ellipse at center,#D4A98A 0%,#9B6B4A 100%);border-radius:50%;margin-bottom:-8px;z-index:1}
+.muyu-body{width:120px;height:120px;background:radial-gradient(circle at 45% 40%,#E0B878 0%,#C4854A 35%,#9B5F35 100%);border-radius:50%;position:relative;box-shadow:0 8px 30px rgba(139,87,48,0.35),inset 0 -5px 10px rgba(0,0,0,0.15),inset 0 3px 6px rgba(255,255,255,0.1);transition:transform 0.08s ease-out;z-index:2}
+.muyu-body:active,.muyu-body.pressed{transform:scale(0.9) translateY(8px);box-shadow:0 2px 8px rgba(139,87,48,0.3),inset 0 -2px 4px rgba(0,0,0,0.2);transition:transform 0.05s ease-out}
+.muyu-groove{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:50px;height:6px;background:rgba(0,0,0,0.16);border-radius:3px}
+.muyu-fish{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:24px;background:rgba(0,0,0,0.06);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;display:flex;align-items:center;justify-content:center}
+.muyu-fish::after{content:'🐟';font-size:13px;opacity:0.4}
+.muyu-amount{font-size:2.6rem;font-weight:700;color:var(--brown);margin-top:12px;font-family:Georgia,serif}
+.muyu-amount.bump{animation:amountBump 0.35s ease-out}
+.muyu-hint{font-size:0.78rem;color:#C0A894;margin-top:6px}
+@keyframes amountBump{0%{transform:scale(1)}25%{transform:scale(1.25);color:var(--deep-pink)}100%{transform:scale(1)}}
+
+/* ===== WHEEL ===== */
+.wheel-wrap{position:relative;width:280px;height:280px;margin:0 auto}
+.wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:1.6rem;color:#E8486B;z-index:10;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.2));animation:pointerBounce 1s ease-in-out infinite}
+@keyframes pointerBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(4px)}}
+#wheelCanvas{display:block;width:280px;height:280px;border-radius:50%}
+.wheel-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;border:3px solid #FFF;background:linear-gradient(135deg,#FF6B8A,#E8486B);color:white;font-size:1.2rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(232,72,107,0.4);z-index:5;transition:transform 0.1s}
+.wheel-btn:active{transform:translate(-50%,-50%) scale(0.88)}
+.wheel-btn:disabled{opacity:0.5;pointer-events:none}
+.wheel-counter{text-align:center;color:#B0A090;font-size:0.82rem;margin-top:10px}
+
+/* ===== VOUCHERS ===== */
+.voucher-card{
+  background:linear-gradient(135deg,#FFFDF5,#FFF8E1);border:2px dashed #E8D5A0;
+  border-radius:12px;padding:16px;margin-bottom:10px;position:relative;display:flex;align-items:center;gap:14px
+}
+.voucher-icon{font-size:2.2rem}
+.voucher-info{flex:1}
+.voucher-name{font-weight:700;color:var(--brown);font-size:0.95rem}
+.voucher-time{font-size:0.7rem;color:#B8A090;margin-top:2px}
+.voucher-detail{font-size:0.75rem;color:#C0392B;margin-top:4px}
+.voucher-empty{text-align:center;color:#C8B4A4;padding:30px 0;font-size:0.9rem}
+
+/* ===== BOTTLE PAGE ===== */
+.bottle-scene{position:relative;width:100%;height:360px;border-radius:16px;overflow:hidden;margin-bottom:14px}
+.scene-sky{position:absolute;top:0;left:0;right:0;height:55%;background:linear-gradient(180deg,#87CEEB 0%,#B5DFF5 100%)}
+.scene-sun{position:absolute;top:15px;right:25px;width:42px;height:42px;background:radial-gradient(circle,#FFF3C4,#FFD166 50%,#F0A030 100%);border-radius:50%;box-shadow:0 0 30px rgba(255,209,102,0.5);animation:sunGlow 3s ease-in-out infinite}
+@keyframes sunGlow{0%,100%{box-shadow:0 0 25px rgba(255,209,102,0.4)}50%{box-shadow:0 0 45px rgba(255,209,102,0.7)}}
+.scene-cloud{position:absolute;background:white;border-radius:50px;opacity:0.85}
+.scene-cloud::before,.scene-cloud::after{content:'';position:absolute;background:white;border-radius:50%}
+.c1{width:65px;height:20px;top:20px;left:10%;animation:cloudDrift 22s linear infinite}
+.c1::before{width:28px;height:28px;top:-14px;left:12px}.c1::after{width:20px;height:20px;top:-8px;left:36px}
+.c2{width:50px;height:15px;top:50px;left:60%;animation:cloudDrift 26s linear infinite;animation-delay:-8s}
+.c2::before{width:22px;height:22px;top:-11px;left:8px}.c2::after{width:15px;height:15px;top:-7px;left:26px}
+.c3{width:55px;height:18px;top:60px;left:80%;animation:cloudDrift 20s linear infinite;animation-delay:-14s}
+.c3::before{width:25px;height:25px;top:-13px;left:10px}.c3::after{width:17px;height:17px;top:-8px;left:32px}
+@keyframes cloudDrift{0%{transform:translateX(0)}100%{transform:translateX(-120px)}}
+.scene-sea{position:absolute;bottom:0;left:0;right:0;height:48%;background:linear-gradient(180deg,#5BADD5 0%,#3D8FBF 30%,#1B5E8A 100%)}
+.scene-wave{position:absolute;left:-5%;width:110%;border-radius:40%;opacity:0.45}
+.w1{top:0;height:35px;background:rgba(110,190,230,0.5);animation:waveRoll 3.5s ease-in-out infinite}
+.w2{top:12px;height:40px;background:rgba(80,160,210,0.45);animation:waveRoll 4.5s ease-in-out infinite reverse}
+.w3{top:26px;height:45px;background:rgba(50,130,190,0.4);animation:waveRoll 5.5s ease-in-out infinite}
+@keyframes waveRoll{0%,100%{transform:translateX(-3%) rotate(0deg)}25%{transform:translateX(3%) rotate(1deg)}50%{transform:translateX(-2%) rotate(0deg)}75%{transform:translateX(2%) rotate(-1deg)}}
+
+/* 海上漂流瓶 */
+.floating-bottles{position:absolute;bottom:35%;left:0;right:0;height:40%;z-index:10}
+.float-bottle{position:absolute;font-size:2rem;cursor:pointer;animation:bobFloat 3s ease-in-out infinite;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2))}
+.float-bottle:nth-child(1){left:15%;animation-delay:0s;animation-duration:3.2s}
+.float-bottle:nth-child(2){left:40%;animation-delay:-0.8s;animation-duration:3.6s}
+.float-bottle:nth-child(3){left:65%;animation-delay:-1.6s;animation-duration:2.8s}
+.float-bottle:nth-child(4){left:80%;animation-delay:-2.4s;animation-duration:3.4s}
+.float-bottle-label{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:0.55rem;background:rgba(0,0,0,0.6);color:white;padding:1px 6px;border-radius:8px;white-space:nowrap}
+@keyframes bobFloat{0%,100%{transform:translateY(0) rotate(-3deg)}25%{transform:translateY(-8px) rotate(2deg)}50%{transform:translateY(0) rotate(-2deg)}75%{transform:translateY(6px) rotate(4deg)}}
+
+/* 写烦恼区 */
+.worry-textarea{width:100%;min-height:100px;border:2px solid #E8D5B0;border-radius:12px;padding:14px;font-size:0.95rem;font-family:"STKaiti","KaiTi",serif;color:var(--dark);resize:vertical;outline:none;background:#FFFEF9;line-height:1.8}
+.worry-textarea:focus{border-color:var(--deep-pink)}
+.worry-actions{display:flex;gap:10px;margin-top:10px}
+.btn{padding:10px 20px;border:none;border-radius:25px;font-size:0.9rem;cursor:pointer;font-family:var(--font-main);transition:transform 0.15s}
+.btn:active{transform:scale(0.96)}
+.btn-primary{background:linear-gradient(135deg,#5B9BD5,#3B7DC4);color:white;flex:1}
+.btn-pink{background:linear-gradient(135deg,#E8A0B4,#D4889A);color:white}
+
+/* 历史瓶子列表 */
+.bottle-history-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.bottle-tag{display:flex;align-items:center;gap:4px;background:#FFFEF9;border:1px solid #E8D5B0;border-radius:20px;padding:6px 14px;cursor:pointer;font-size:0.82rem;transition:transform 0.15s}
+.bottle-tag:active{transform:scale(0.95)}
+.bottle-tag.has-reply{border-color:#5B9BD5;background:#F0F7FD}
+
+/* ===== REPLY ===== */
+.reply-badge{display:inline-block;background:#E8486B;color:white;width:6px;height:6px;border-radius:50%;margin-left:2px}
+
+/* ===== QUOTE ===== */
+.quote-card{text-align:center;padding:18px 16px;background:linear-gradient(135deg,#FFF7F2,#FFEFE6);border-radius:14px;border:1px solid rgba(232,160,180,0.2);cursor:pointer;min-height:70px;display:flex;flex-direction:column;justify-content:center}
+.quote-text{font-size:1.05rem;color:var(--brown);line-height:1.8;font-family:Georgia,"STSong",serif;transition:opacity 0.3s}
+.quote-text.fade{opacity:0}
+.quote-hint{font-size:0.7rem;color:#C8B4A4;margin-top:8px}
+
+/* ===== PHOTO ===== */
+.photo-mini{display:flex;gap:8px;overflow-x:auto;padding:8px 0;-webkit-overflow-scrolling:touch}
+.photo-mini img{width:100px;height:100px;border-radius:12px;object-fit:cover;flex-shrink:0;cursor:pointer;transition:transform 0.2s}
+.photo-mini img:active{transform:scale(0.95)}
+
+/* ===== MODALS ===== */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center}
+.modal-overlay.active{display:flex}
+.modal-box{background:var(--white);border-radius:var(--radius);padding:28px 22px;max-width:350px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.2);animation:modalIn 0.3s ease-out}
+@keyframes modalIn{from{transform:scale(0.85);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-btn{margin-top:12px;padding:10px 28px;border:none;border-radius:25px;background:var(--deep-pink);color:white;font-size:0.95rem;cursor:pointer;font-family:var(--font-main)}
+.modal-btn:active{transform:scale(0.95)}
+.modal-btn-row{display:flex;gap:10px;justify-content:center;margin-top:14px}
+
+/* ===== BOTTLE OPEN (letter) ===== */
+.letter-paper{background:linear-gradient(180deg,#FFFEF9 0%,#FFF9E8 100%);border:1px solid #D4C5A0;border-radius:4px;padding:24px 20px;font-family:"STKaiti","KaiTi",serif;color:var(--dark);line-height:2;text-align:left;max-height:50vh;overflow-y:auto;position:relative}
+.letter-date{text-align:right;color:#B8A090;font-size:0.8rem;margin-bottom:10px}
+.letter-body{white-space:pre-wrap;word-break:break-word}
+.letter-reply{border-top:1px dashed #E8D5B0;margin-top:14px;padding-top:14px;color:#3B7DC4}
+.letter-reply-label{font-size:0.8rem;color:#5B9BD5;margin-bottom:4px}
+
+/* ===== ADMIN ===== */
+.admin-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;justify-content:center;align-items:center}
+.admin-overlay.active{display:flex}
+.admin-panel{background:var(--white);border-radius:var(--radius);width:92%;max-width:440px;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.25);animation:modalIn 0.3s ease-out}
+.admin-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #F0E6D8;position:sticky;top:0;background:var(--white);z-index:1;border-radius:var(--radius) var(--radius) 0 0}
+.admin-close{background:none;border:none;font-size:1.3rem;color:#A0897B;cursor:pointer}
+.admin-body{padding:14px 18px 22px}
+.admin-stat{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F5E6D3;font-size:0.85rem}
+.admin-stat-label{color:#A0897B}.admin-stat-value{color:var(--brown);font-weight:600}
+.admin-title{font-size:0.92rem;color:var(--brown);font-weight:600;margin:14px 0 6px}
+.admin-btn{display:block;width:100%;margin-top:8px;padding:10px;border:none;border-radius:18px;font-size:0.85rem;cursor:pointer;font-family:var(--font-main)}
+.admin-btn-info{background:#EAF0FB;color:#2C5282}
+.admin-btn-danger{background:#FFE8E8;color:#C0392B}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;top:16%;left:50%;transform:translateX(-50%);background:rgba(74,55,40,0.9);color:#FFFBF7;padding:12px 24px;border-radius:28px;font-size:0.95rem;z-index:3000;animation:toastIn 0.4s ease-out,toastOut 0.4s 2.4s ease-in forwards;pointer-events:none;max-width:90vw;text-align:center}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0}}
+
+/* ===== PARTICLES ===== */
+.ptcls{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:999}
+
+/* ===== REPLY FEEDBACK MODAL ===== */
+.feedback-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1500;justify-content:center;align-items:center}
+.feedback-modal.active{display:flex}
 </style>
 </head>
 <body>
 
-<div class="particles-container" id="particlesContainer"></div>
+<div class="ptcls" id="ptcls"></div>
+<div id="app"></div>
 
-<div id="app">
+<!-- NAV BAR -->
+<nav class="nav-bar" id="navBar">
+  <div class="nav-item active" data-page="home"><span class="nav-icon">🏠</span>首页</div>
+  <div class="nav-item" data-page="muyu"><span class="nav-icon">🪵</span>木鱼</div>
+  <div class="nav-item" data-page="wheel"><span class="nav-icon">🎡</span>转盘</div>
+  <div class="nav-item" data-page="bottle"><span class="nav-icon">🍾</span>漂流瓶</div>
+  <div class="nav-item" data-page="vouchers"><span class="nav-icon">🎫</span>券包</div>
+</nav>
 
-  <!-- ===== Hero 标题区 ===== -->
-  <section class="hero" id="heroSection">
-    <div class="hero-hearts">🌸 💕 🌸</div>
-    <h1 class="hero-title" id="heroTitle">华仔の温暖小站</h1>
-    <p class="hero-subtitle" id="heroSubtitle">今天也是被爱的一天 ✨</p>
-  </section>
-
-  <!-- ===== 木鱼敲击区 ===== -->
-  <section class="section muyu-section" id="muyuSection">
-    <div class="section-title">🪵 敲敲木鱼 · 烦恼飞走</div>
-    <div class="muyu-container" id="muyuContainer">
-      <div class="muyu-stand" id="muyuStand">
-        <div class="muyu-cushion"></div>
-        <div class="muyu-body" id="muyuBody">
-          <div class="muyu-groove"></div>
-          <div class="muyu-fish"></div>
-        </div>
-      </div>
-    </div>
-    <div class="muyu-amount" id="muyuAmount">¥0.0</div>
-    <div class="muyu-hint">👆 敲一敲，每下都有小奖励哦～</div>
-  </section>
-
-  <!-- ===== 幸运大转盘 ===== -->
-  <section class="section wheel-section" id="wheelSection">
-    <div class="section-title">🎡 幸运大转盘</div>
-    <div class="wheel-wrapper">
-      <div class="wheel-pointer">▼</div>
-      <canvas id="wheelCanvas" width="300" height="300"></canvas>
-      <button class="wheel-btn" id="wheelBtn">抽</button>
-    </div>
-    <div class="wheel-counter" id="wheelCounter">已转 0 次</div>
-  </section>
-
-  <!-- ===== 照片墙 ===== -->
-  <section class="section photo-section" id="photoSection">
-    <div class="section-title">🖼️ 我们的美好时光</div>
-    <div class="photo-grid" id="photoGrid"></div>
-  </section>
-
-  <!-- ===== 暖心话语 ===== -->
-  <section class="section quote-section" id="quoteSection">
-    <div class="section-title">📝 华仔想对你说</div>
-    <div class="quote-card" id="quoteCard">
-      <div class="quote-text" id="quoteText"></div>
-      <div class="quote-hint">👆 点击换一句</div>
-    </div>
-  </section>
-
-  <!-- ===== 烦恼漂流瓶 ===== -->
-  <section class="section bottle-section" id="bottleSection">
-    <div class="section-title">🍾 烦恼漂流瓶</div>
-    <div class="bottle-stage" id="bottleStage">
-      <!-- 阶段0: 写烦恼 -->
-      <div class="note-wrapper" id="noteWrapper">
-        <div class="note-lines"></div>
-        <textarea class="note-textarea" id="worryInput" placeholder="在这里写下你的烦恼吧..." maxlength="1000"></textarea>
-        <div class="note-char-count"><span id="charCount">0</span>/1000</div>
-      </div>
-      <button class="toss-btn" id="tossBtn">📜 卷起烦恼，丢进大海 🌊</button>
-
-      <!-- 阶段1: 动画区 -->
-      <div class="bottle-anim-stage" id="bottleAnimStage">
-        <div class="ocean-sky" id="oceanSky">
-          <div class="sun"></div>
-          <div class="cloud cloud1"></div>
-          <div class="cloud cloud2"></div>
-          <div class="cloud cloud3"></div>
-          <div class="birds"></div>
-        </div>
-        <div class="ocean-surface" id="oceanSurface">
-          <div class="wave wave1"></div>
-          <div class="wave wave2"></div>
-          <div class="wave wave3"></div>
-        </div>
-        <div class="paper-roll-stage" id="paperRollStage">
-          <div class="anim-paper-new" id="animPaperNew">
-            <div class="anim-paper-inner" id="animPaperInner"></div>
-          </div>
-        </div>
-        <div class="bottle-sail" id="bottleSail">🍾</div>
-      </div>
-
-      <!-- 阶段2: 完成 -->
-      <div class="bottle-done" id="bottleDone">
-        <div class="done-icon">🌅</div>
-        <div class="done-text">烦恼已随海浪飘走啦～</div>
-        <div class="done-sub">大海带走了它，新的一天开始了 ✨</div>
-        <button class="toss-btn toss-btn-reset" id="resetBtn">✍️ 再写一张</button>
-    </div>
-
-    <!-- 历史记录：始终可见 -->
-    <div class="bottle-history" id="bottleHistory">
-      <div class="history-title">📋 我的漂流瓶</div>
-      <div class="history-list" id="historyList">
-        <div style="color:#C8B4A4;text-align:center;font-size:0.85rem;">还没有丢过烦恼哦～</div>
-      </div>
-    </div>
-  </section>
-
-</div><!-- /#app -->
-
-<!-- ===== 结果弹窗 ===== -->
-<div class="modal-overlay" id="resultOverlay">
-  <div class="modal-box">
-    <div id="resultContent"></div>
-    <button class="modal-close" id="resultCloseBtn">好的 👌</button>
+<!-- ===== MODALS ===== -->
+<!-- 转盘结果 -->
+<div class="modal-overlay" id="wheelResultModal">
+  <div class="modal-box"><div id="wheelResultContent"></div><button class="modal-btn" id="wheelResultClose">好的 👌</button></div>
+</div>
+<!-- 照片放大 -->
+<div class="modal-overlay" id="photoModal"><img id="photoLarge" style="max-width:92vw;max-height:80vh;border-radius:14px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,0.3)" alt="photo"/></div>
+<!-- 信件打开 -->
+<div class="modal-overlay" id="letterModal"><div class="modal-box" style="max-width:380px;padding:0;background:transparent;box-shadow:none"><div id="letterContent"></div><button class="modal-btn" style="margin:10px auto;display:block" id="letterClose">关上信封 ✉️</button></div></div>
+<!-- 是否需要反馈弹窗 -->
+<div class="modal-overlay" id="feedbackModal"><div class="modal-box">
+  <div style="font-size:1.1rem;color:var(--brown);margin-bottom:8px">💌 需要华仔的回复吗？</div>
+  <div style="font-size:0.85rem;color:#A0897B;margin-bottom:4px">华仔会读到你的烦恼并给你回应</div>
+  <div class="modal-btn-row">
+    <button class="modal-btn" id="feedbackYes" style="background:#3B7DC4">需要 💕</button>
+    <button class="modal-btn" id="feedbackNo" style="background:#C0B0A0">不用啦</button>
   </div>
-</div>
-
-<!-- ===== 照片放大弹窗 ===== -->
-<div class="modal-overlay" id="photoOverlay">
-  <img id="photoLarge" style="max-width:92vw;max-height:80vh;border-radius:14px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,0.3);" alt="放大照片" />
-</div>
-
-<!-- ===== 管理面板 ===== -->
-<div class="admin-overlay" id="adminOverlay">
-  <div class="admin-panel">
-    <div class="admin-header">
-      <h2>🔒 管理面板</h2>
-      <button class="admin-close" id="adminClose">✕</button>
-    </div>
-    <div class="admin-body" id="adminBody"></div>
-  </div>
-</div>
-
-<!-- ===== 密码输入弹窗 ===== -->
-<div class="modal-overlay" id="pwdOverlay">
-  <div class="modal-box">
-    <div style="font-size:1.3rem;margin-bottom:14px;color:var(--brown);">🔐 验证身份</div>
-    <input type="password" id="pwdInput" placeholder="请输入密码" style="width:100%;padding:12px 16px;border:2px solid var(--pink);border-radius:25px;font-size:1rem;text-align:center;outline:none;margin-bottom:14px;font-family:var(--font-main);">
-    <div>
-      <button class="modal-close" id="pwdCancel" style="background:#C0B0A0;">取消</button>
-      <button class="modal-close" id="pwdConfirm" style="margin-left:8px;background:var(--brown);">确认</button>
-    </div>
-  </div>
-</div>
+</div></div>
+<!-- 管理面板 -->
+<div class="admin-overlay" id="adminOverlay"><div class="admin-panel"><div class="admin-header"><h2>🔒 管理面板</h2><button class="admin-close" id="adminClose">✕</button></div><div class="admin-body" id="adminBody"></div></div></div>
+<!-- 密码弹窗 -->
+<div class="modal-overlay" id="pwdOverlay"><div class="modal-box">
+  <div style="font-size:1.2rem;margin-bottom:12px;color:var(--brown)">🔐 验证身份</div>
+  <input type="password" id="pwdInput" placeholder="请输入密码" style="width:100%;padding:12px;border:2px solid #F9D0C3;border-radius:25px;font-size:1rem;text-align:center;outline:none;margin-bottom:12px;font-family:var(--font-main)">
+  <div><button class="modal-btn" id="pwdCancel" style="background:#C0B0A0">取消</button><button class="modal-btn" id="pwdConfirm" style="margin-left:8px;background:var(--brown)">确认</button></div>
+</div></div>
 
 <script>
 // ======================================================================
-//  华仔の温暖小站 — 核心逻辑
+//  CORE
 // ======================================================================
-
-const WA = {
-  PASSWORD: 'HhxloveCwh1314!',
-
-  // ---- localStorage 工具 ----
+const W = {
+  PWD: 'HhxloveCwh1314!',
   store: {
-    get(key, fallback) {
-      try { const v = localStorage.getItem('warm_' + key); return v !== null ? JSON.parse(v) : fallback; }
-      catch(e) { return fallback; }
-    },
-    set(key, val) {
-      try { localStorage.setItem('warm_' + key, JSON.stringify(val)); } catch(e) {}
-    }
+    get(k, fb) { try { const v = localStorage.getItem('warm_'+k); return v!==null ? JSON.parse(v) : fb; } catch(e) { return fb; } },
+    set(k, v) { try { localStorage.setItem('warm_'+k, JSON.stringify(v)); } catch(e) {} }
   },
-
-  // ---- 初始化数据 ----
   init() {
-    if (this.store.get('muyu_count', null) === null)  this.store.set('muyu_count', 0);
-    if (this.store.get('muyu_total', null) === null)  this.store.set('muyu_total', 0);
-    if (this.store.get('wheel_count', null) === null) this.store.set('wheel_count', 0);
-    if (this.store.get('wheel_records', null) === null) this.store.set('wheel_records', []);
-    if (this.store.get('wheel_milestones', null) === null) {
-      this.store.set('wheel_milestones', { m52: false, m520: false, m1314: false });
-    }
+    ['muyu_count','muyu_total','wheel_count','wheel_records','wheel_milestones','vouchers','bottle_history','bottle_replies'].forEach(k => {
+      if (this.store.get(k, null) === null) {
+        const defaults = { muyu_count:0, muyu_total:0, wheel_count:0, wheel_records:[], wheel_milestones:{m52:false,m520:false,m1314:false}, vouchers:[], bottle_history:[], bottle_replies:{} };
+        this.store.set(k, defaults[k]);
+      }
+    });
   },
-
-  // ---- 工具函数 ----
-  fmtMoney(count) { return (count * 0.1).toFixed(1); },
-
-  spawnParticles(x, y, text, count) {
-    const container = document.getElementById('particlesContainer');
-    for (let i = 0; i < count; i++) {
+  toast(msg) {
+    const e = document.querySelector('.toast'); if(e) e.remove();
+    const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+    document.body.appendChild(t); setTimeout(() => t.remove(), 2900);
+  },
+  spawn(x, y, text, n) {
+    const c = document.getElementById('ptcls');
+    for (let i = 0; i < n; i++) {
       const p = document.createElement('div');
       p.textContent = text;
-      const dx = (Math.random() - 0.5) * 70;
-      p.style.cssText = `
-        position:fixed; left:${x}px; top:${y}px;
-        font-size:${14 + Math.random() * 12}px;
-        pointer-events:none; z-index:999;
-        --dx:${dx}px;
-        animation: particleUp ${0.5 + Math.random() * 0.5}s ease-out forwards;
-      `;
-      container.appendChild(p);
-      setTimeout(() => p.remove(), 1100);
+      p.style.cssText = `position:fixed;left:${x}px;top:${y}px;font-size:${12+Math.random()*12}px;pointer-events:none;z-index:999;--dx:${(Math.random()-0.5)*70}px;animation:ptcl ${0.5+Math.random()*0.5}s ease-out forwards`;
+      c.appendChild(p); setTimeout(() => p.remove(), 1100);
     }
   },
-
-  showToast(msg) {
-    const existing = document.querySelector('.toast-msg');
-    if (existing) existing.remove();
-    const toast = document.createElement('div');
-    toast.className = 'toast-msg';
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2700);
-  },
-
-  // ---- 飘落花瓣 ----
-  startPetals() {
-    const petals = ['🌸', '💮', '🌷', '🍂', '✨', '🌺'];
-    const spawn = () => {
-      const p = document.createElement('div');
-      p.className = 'petal';
-      p.textContent = petals[Math.floor(Math.random() * petals.length)];
-      p.style.left = Math.random() * 100 + '%';
-      p.style.fontSize = (14 + Math.random() * 18) + 'px';
-      p.style.animationDuration = (10 + Math.random() * 14) + 's';
-      p.style.animationDelay = Math.random() * 3 + 's';
-      document.body.appendChild(p);
-      setTimeout(() => p.remove(), 18000);
-    };
-    for (let i = 0; i < 10; i++) setTimeout(spawn, i * 700);
-    setInterval(spawn, 3500);
-  }
+  fmtDate(iso) { const d=new Date(iso); return d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); },
+  fmtDateShort(iso) { const d=new Date(iso); return (d.getMonth()+1)+'.'+d.getDate(); },
 };
 
+const ptclStyle = document.createElement('style');
+ptclStyle.textContent = `@keyframes ptcl{0%{opacity:1;transform:translateY(0) translateX(0) scale(1)}100%{opacity:0;transform:translateY(-80px) translateX(var(--dx,20px)) scale(0.3)}}`;
+document.head.appendChild(ptclStyle);
+
 // ======================================================================
-//  木鱼模块
+//  NAVIGATION
 // ======================================================================
-WA.muyu = {
-  audioCtx: null,
+const pages = {};
+function showPage(name) {
+  Object.values(pages).forEach(p => p.classList.remove('active'));
+  pages[name].classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === name));
+}
+document.querySelectorAll('.nav-item').forEach(n => {
+  n.addEventListener('click', () => showPage(n.dataset.page));
+});
 
-  init() {
-    this.count = WA.store.get('muyu_count', 0);
-    this.total = WA.store.get('muyu_total', 0);
-    this.body = document.getElementById('muyuBody');
-    this.amountEl = document.getElementById('muyuAmount');
-    this.updateDisplay();
-    this.bindEvents();
-  },
+// ======================================================================
+//  BUILD PAGES
+// ======================================================================
+const app = document.getElementById('app');
 
-  bindEvents() {
-    const stand = document.getElementById('muyuStand');
-    stand.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      this.body.classList.add('pressed');
-      this.hit(e);
-    });
-    stand.addEventListener('pointerup', () => this.body.classList.remove('pressed'));
-    stand.addEventListener('pointerleave', () => this.body.classList.remove('pressed'));
-    stand.addEventListener('pointercancel', () => this.body.classList.remove('pressed'));
-  },
+// --- HOME ---
+pages.home = document.createElement('div'); pages.home.className = 'page active';
+pages.home.innerHTML = `
+<div class="hero" id="heroSection">
+  <div class="hero-hearts">🌸 💕 🌸</div>
+  <h1 class="hero-title" id="heroTitle">华仔の温暖小站</h1>
+  <p class="hero-subtitle" id="heroSubtitle">今天也是被爱的一天 ✨</p>
+</div>
+<div class="card">
+  <div class="card-title">📝 华仔想对你说</div>
+  <div class="quote-card" id="quoteCard"><div class="quote-text" id="quoteText"></div><div class="quote-hint">👆 点击换一句</div></div>
+</div>
+<div class="card">
+  <div class="card-title">🖼️ 美好瞬间</div>
+  <div class="photo-mini" id="photoMini"></div>
+</div>
+<div class="card">
+  <div class="card-title">🏠 快捷跳转</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <button class="btn btn-primary" onclick="showPage('muyu')" style="flex:0 0 auto">🪵 去敲木鱼</button>
+    <button class="btn btn-primary" onclick="showPage('wheel')" style="flex:0 0 auto;background:linear-gradient(135deg,#FF8BA7,#E8486B)">🎡 试试手气</button>
+    <button class="btn btn-primary" onclick="showPage('bottle')" style="flex:0 0 auto;background:linear-gradient(135deg,#5B9BD5,#3B7DC4)">🍾 丢个烦恼</button>
+  </div>
+</div>`;
+app.appendChild(pages.home);
 
-  hit(e) {
-    this.count++;
-    this.total = parseFloat((this.total + 0.1).toFixed(1));
-    WA.store.set('muyu_count', this.count);
-    WA.store.set('muyu_total', this.total);
+// --- MUYU ---
+pages.muyu = document.createElement('div'); pages.muyu.className = 'page';
+pages.muyu.innerHTML = `
+<div class="card"><div class="card-title">🪵 敲敲木鱼 · 烦恼飞走</div>
+<div class="muyu-wrap"><div class="muyu-stand" id="muyuStand"><div class="muyu-cushion"></div><div class="muyu-body" id="muyuBody"><div class="muyu-groove"></div><div class="muyu-fish"></div></div></div></div>
+<div class="muyu-amount" id="muyuAmount">¥0.0</div>
+<div class="muyu-hint">👆 每敲一下 +0.1元 奖励金</div>
+</div>`;
+app.appendChild(pages.muyu);
 
-    this.playSound();
-    if (navigator.vibrate) navigator.vibrate(15);
+// --- WHEEL ---
+pages.wheel = document.createElement('div'); pages.wheel.className = 'page';
+pages.wheel.innerHTML = `
+<div class="card"><div class="card-title">🎡 幸运大转盘</div>
+<div class="wheel-wrap"><div class="wheel-pointer">▼</div><canvas id="wheelCanvas" width="280" height="280"></canvas><button class="wheel-btn" id="wheelBtn">抽</button></div>
+<div class="wheel-counter" id="wheelCounter">已转 0 次</div>
+</div>`;
+app.appendChild(pages.wheel);
 
-    this.updateDisplay();
-    this.amountEl.classList.remove('bump');
-    void this.amountEl.offsetWidth;
-    this.amountEl.classList.add('bump');
+// --- BOTTLE ---
+pages.bottle = document.createElement('div'); pages.bottle.className = 'page';
+pages.bottle.innerHTML = `
+<div class="card"><div class="card-title">🍾 烦恼漂流瓶</div>
+<div class="bottle-scene" id="bottleScene">
+  <div class="scene-sky"><div class="scene-sun"></div><div class="scene-cloud c1"></div><div class="scene-cloud c2"></div><div class="scene-cloud c3"></div></div>
+  <div class="scene-sea"><div class="scene-wave w1"></div><div class="scene-wave w2"></div><div class="scene-wave w3"></div></div>
+  <div class="floating-bottles" id="floatingBottles"></div>
+</div>
+<textarea class="worry-textarea" id="worryInput" placeholder="在这里写下烦恼，然后丢进大海吧..." maxlength="1000"></textarea>
+<div style="text-align:right;font-size:0.72rem;color:#C0A894;margin-top:2px"><span id="charCount">0</span>/1000</div>
+<div class="worry-actions"><button class="btn btn-primary" id="tossBtn">📜 卷起烦恼，丢进大海 🌊</button></div>
+<div style="margin-top:14px"><div class="card-title" style="text-align:left;margin-bottom:8px">📋 我的漂流瓶</div><div class="bottle-history-list" id="bottleHistoryList"><div class="voucher-empty">还没有丢过烦恼哦～</div></div></div>
+</div>`;
+app.appendChild(pages.bottle);
 
-    const rect = this.body.getBoundingClientRect();
-    WA.spawnParticles(rect.left + rect.width / 2, rect.top + 10, '+0.1', 3);
-    WA.spawnParticles(rect.left + rect.width * 0.7, rect.top + 5, '💛', 2);
+// --- VOUCHERS ---
+pages.vouchers = document.createElement('div'); pages.vouchers.className = 'page';
+pages.vouchers.innerHTML = `
+<div class="card"><div class="card-title">🎫 我的兑换券</div><div id="voucherList"><div class="voucher-empty">还没有兑换券哦～去转转盘吧 🎡</div></div></div>`;
+app.appendChild(pages.vouchers);
 
-    this.checkEasterEgg();
-  },
+// ======================================================================
+//  MUYU ENGINE
+// ======================================================================
+(function initMuyu() {
+  let count = W.store.get('muyu_count', 0);
+  let total = W.store.get('muyu_total', 0);
+  const body = document.getElementById('muyuBody');
+  const amt = document.getElementById('muyuAmount');
+  let audioCtx = null;
 
-  playSound() {
+  amt.textContent = '¥' + total.toFixed(1);
+
+  const stand = document.getElementById('muyuStand');
+  stand.addEventListener('pointerdown', e => { e.preventDefault(); body.classList.add('pressed'); hit(e); });
+  stand.addEventListener('pointerup', () => body.classList.remove('pressed'));
+  stand.addEventListener('pointerleave', () => body.classList.remove('pressed'));
+
+  function hit(e) {
+    count++; total = parseFloat((total + 0.1).toFixed(1));
+    W.store.set('muyu_count', count); W.store.set('muyu_total', total);
+
+    // audio
     try {
-      if (!this.audioCtx) {
-        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      const ctx = this.audioCtx;
-      if (ctx.state === 'suspended') ctx.resume();
-      const now = ctx.currentTime;
-
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(200, now);
-      osc.frequency.exponentialRampToValueAtTime(90, now + 0.1);
-
-      gain.gain.setValueAtTime(0.3, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
-
-      osc.start(now);
-      osc.stop(now + 0.22);
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const ctx = audioCtx, t = ctx.currentTime;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = 'sine'; o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(90, t+0.1);
+      g.gain.setValueAtTime(0.35, t); g.gain.exponentialRampToValueAtTime(0.01, t+0.22);
+      o.start(t); o.stop(t+0.22);
     } catch(_) {}
-  },
 
-  updateDisplay() {
-    this.amountEl.textContent = '¥' + this.total.toFixed(1);
-  },
+    if (navigator.vibrate) navigator.vibrate(12);
+    amt.textContent = '¥' + total.toFixed(1);
+    amt.classList.remove('bump'); void amt.offsetWidth; amt.classList.add('bump');
 
-  checkEasterEgg() {
-    const special = {
-      '5.2': '💝 5.20！我爱你，不止今天',
-      '13.1': '💖 13.14！一生一世只爱你',
-      '52.0': '💗 52.0！吾爱零，爱你永无止境',
-      '99.9': '💕 99.9！长长久久，永远在一起',
-      '131.4': '💘 131.4！一生一世，只属于你'
-    };
-    const t = this.total.toFixed(1);
-    if (special[t]) {
-      setTimeout(() => {
-        WA.showToast(special[t]);
-        WA.spawnParticles(window.innerWidth / 2, window.innerHeight / 2, '🎉', 15);
-      }, 350);
-    }
+    const r = body.getBoundingClientRect();
+    W.spawn(r.left+r.width/2, r.top+5, '+0.1', 3);
+    W.spawn(r.left+r.width*0.7, r.top, '💛', 2);
+
+    // easter egg
+    const sp = {'5.2':'💝 5.20！我爱你','13.1':'💖 13.14！一生一世','52.0':'💗 52.0！吾爱零'};
+    if (sp[total.toFixed(1)]) { setTimeout(() => { W.toast(sp[total.toFixed(1)]); W.spawn(window.innerWidth/2, window.innerHeight/2, '🎉', 15); }, 350); }
   }
-};
-
-// ======================================================================
-//  转盘模块
-// ======================================================================
-WA.wheel = {
-  prizes: [
-    { name: '谢谢惠顾',       icon: '😅', prob: 0.42, level: 0 },
-    { name: '华仔亲亲',       icon: '😘', prob: 0.25, level: 0 },
-    { name: '爱的抱抱',       icon: '🫂', prob: 0.16, level: 0 },
-    { name: '请喝奶茶',       icon: '🧋', prob: 0.09, level: 1 },
-    { name: '请吃饭',         icon: '🍽️', prob: 0.04, level: 1 },
-    { name: '买束花花',       icon: '💐', prob: 0.025, level: 2 },
-    { name: '买Jellycat',    icon: '🧸', prob: 0.01, level: 2 },
-    { name: '买包包/戒指',    icon: '💍', prob: 0.005, level: 3 },
-  ],
-  colors: ['#FFE6DA', '#FFF7F0', '#FFE0D0', '#FFFBF7', '#FFECD8', '#FFF4EC', '#FFE2CE', '#FFFAF6'],
-  spinning: false,
-  currentAngle: 0,
-
-  init() {
-    this.count = WA.store.get('wheel_count', 0);
-    this.records = WA.store.get('wheel_records', []);
-    this.milestones = WA.store.get('wheel_milestones', { m52: false, m520: false, m1314: false });
-    this.canvas = document.getElementById('wheelCanvas');
-    this.ctx = this.canvas.getContext('2d');
-    this.btn = document.getElementById('wheelBtn');
-    this.counterEl = document.getElementById('wheelCounter');
-    this.draw();
-    this.updateCounter();
-    this.bindEvents();
-  },
-
-  bindEvents() {
-    this.btn.addEventListener('click', () => this.spin());
-    document.getElementById('resultCloseBtn').addEventListener('click', () => {
-      document.getElementById('resultOverlay').classList.remove('active');
-    });
-  },
-
-  draw(rotAngle) {
-    const ctx = this.ctx;
-    const cx = 150, cy = 150, r = 140;
-    const sliceAngle = (2 * Math.PI) / this.prizes.length;
-    const angle = rotAngle || this.currentAngle;
-
-    ctx.clearRect(0, 0, 300, 300);
-
-    // 阴影圈
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, r + 5, 0, 2 * Math.PI);
-    ctx.shadowColor = 'rgba(139,111,94,0.18)';
-    ctx.shadowBlur = 15;
-    ctx.fillStyle = '#FFFBF7';
-    ctx.fill();
-    ctx.restore();
-
-    for (let i = 0; i < this.prizes.length; i++) {
-      const start = i * sliceAngle + angle;
-      const end = start + sliceAngle;
-
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, r, start, end);
-      ctx.closePath();
-      ctx.fillStyle = this.colors[i];
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(start + sliceAngle / 2);
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#4A3728';
-      ctx.font = 'bold 16px -apple-system, "PingFang SC", sans-serif';
-      ctx.fillText(this.prizes[i].icon, r * 0.6, 3);
-      ctx.font = '11px -apple-system, "PingFang SC", sans-serif';
-      ctx.fillText(this.prizes[i].name, r * 0.6, 21);
-      ctx.restore();
-    }
-
-    // 中心装饰
-    ctx.beginPath();
-    ctx.arc(cx, cy, 38, 0, 2 * Math.PI);
-    const cg = ctx.createRadialGradient(cx, cy, 4, cx, cy, 38);
-    cg.addColorStop(0, '#FFFBF7');
-    cg.addColorStop(1, '#F0E6D8');
-    ctx.fillStyle = cg;
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-  },
-
-  getAdjustedProbs() {
-    const probs = this.prizes.map(p => ({ ...p }));
-    const c = this.count;
-    let surplus = 0;
-
-    // 里程碑 52: 请吃饭 (index 4)
-    if (!this.milestones.m52 && c >= 48) {
-      const boost = Math.min(0.35, 0.08 + (c - 48) * 0.06);
-      surplus += boost - probs[4].prob;
-      probs[4].prob = boost;
-    }
-
-    // 里程碑 520: Jellycat (index 6)
-    if (!this.milestones.m520 && c >= 505) {
-      const boost = Math.min(0.28, 0.02 + (c - 505) * 0.018);
-      surplus += boost - probs[6].prob;
-      probs[6].prob = boost;
-    }
-
-    // 里程碑 1314: 包包/戒指 (index 7)
-    if (!this.milestones.m1314 && c >= 1295) {
-      const boost = Math.min(0.22, 0.01 + (c - 1295) * 0.012);
-      surplus += boost - probs[7].prob;
-      probs[7].prob = boost;
-    }
-
-    // 分摊 surplus 到低奖级，优先从谢谢惠顾扣
-    if (surplus > 0) {
-      const drain = [0, 1, 2, 3]; // 从这些奖级扣概率
-      let remaining = surplus;
-      for (const idx of drain) {
-        if (remaining <= 0) break;
-        const take = Math.min(probs[idx].prob - 0.03, remaining);
-        if (take > 0) { probs[idx].prob -= take; remaining -= take; }
-      }
-    }
-
-    return probs;
-  },
-
-  pickPrize() {
-    const probs = this.getAdjustedProbs();
-    let r = Math.random();
-    for (let i = 0; i < probs.length; i++) {
-      r -= probs[i].prob;
-      if (r <= 0) return { index: i, prize: probs[i] };
-    }
-    return { index: 0, prize: probs[0] };
-  },
-
-  spin() {
-    if (this.spinning) return;
-    this.spinning = true;
-    this.btn.disabled = true;
-    this.count++;
-    WA.store.set('wheel_count', this.count);
-
-    const { index, prize } = this.pickPrize();
-    const sliceAngle = 360 / this.prizes.length;
-    const targetSliceCenter = index * sliceAngle + sliceAngle / 2;
-    const extraSpins = 4 + Math.floor(Math.random() * 3);
-    const totalSpinDeg = extraSpins * 360 + ((270 - targetSliceCenter) - ((this.currentAngle % 360) + 360) % 360);
-    const targetAngle = this.currentAngle + totalSpinDeg;
-
-    const startAngle = this.currentAngle;
-    const duration = 3800 + Math.random() * 1400;
-    const startTime = performance.now();
-
-    const animate = (now) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
-      const cur = startAngle + totalSpinDeg * eased;
-      this.currentAngle = cur;
-      this.draw(cur * Math.PI / 180);
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        this.currentAngle = targetAngle;
-        this.draw(targetAngle * Math.PI / 180);
-        this.onResult(prize, index);
-      }
-    };
-
-    requestAnimationFrame(animate);
-    this.updateCounter();
-  },
-
-  onResult(prize, index) {
-    const record = {
-      time: new Date().toISOString(),
-      prize: prize.name,
-      icon: prize.icon,
-      level: prize.level
-    };
-    this.records.push(record);
-    WA.store.set('wheel_records', this.records);
-
-    // 里程碑检测
-    if (prize.level === 1 && !this.milestones.m52 && this.count >= 48) {
-      this.milestones.m52 = true;
-      WA.store.set('wheel_milestones', this.milestones);
-    }
-    if (prize.level === 2 && !this.milestones.m520 && this.count >= 505) {
-      this.milestones.m520 = true;
-      WA.store.set('wheel_milestones', this.milestones);
-    }
-    if (prize.level === 3 && !this.milestones.m1314 && this.count >= 1295) {
-      this.milestones.m1314 = true;
-      WA.store.set('wheel_milestones', this.milestones);
-    }
-
-    this.showResultModal(prize);
-
-    if (prize.level >= 2) {
-      setTimeout(() => {
-        WA.spawnParticles(window.innerWidth / 2, window.innerHeight / 2, '🎉', 20);
-        WA.spawnParticles(window.innerWidth / 2, window.innerHeight / 2, '💖', 12);
-      }, 400);
-    }
-
-    setTimeout(() => {
-      if (!document.getElementById('resultOverlay').classList.contains('active')) {
-        this.spinning = false;
-        this.btn.disabled = false;
-      }
-    }, 400);
-  },
-
-  showResultModal(prize) {
-    const content = document.getElementById('resultContent');
-    let msg = '';
-    if (prize.level >= 3) msg = '💎 天哪！超级大奖！！';
-    else if (prize.level >= 2) msg = '🎊 恭喜！大奖来啦！';
-    else if (prize.level === 1) msg = '运气不错哦～';
-    else msg = '下次会更好～';
-
-    content.innerHTML = `
-      <div style="font-size:3.5rem;margin-bottom:8px">${prize.icon}</div>
-      <div style="font-size:1.5rem;font-weight:700;color:#4A3728;margin-bottom:4px">${prize.name}</div>
-      <div style="color:#A0897B;font-size:0.88rem;margin-top:6px">${msg}</div>
-    `;
-    document.getElementById('resultOverlay').classList.add('active');
-
-    // 关闭弹窗后恢复按钮
-    const closeBtn = document.getElementById('resultCloseBtn');
-    const restore = () => {
-      this.spinning = false;
-      this.btn.disabled = false;
-      closeBtn.removeEventListener('click', restore);
-    };
-    closeBtn.addEventListener('click', restore);
-  },
-
-  updateCounter() {
-    this.counterEl.textContent = '已转 ' + this.count + ' 次';
-  }
-};
-
-// ======================================================================
-//  照片墙模块
-// ======================================================================
-WA.photos = {
-  items: [
-    { src: 'images/photos/4f04958f420a5e60cf6f3616ea59957a.jpg', caption: '你的笑容是最好的阳光 ☀️' },
-    { src: 'images/photos/53ebeacc4aa5dbfb59dc553878fce3b3.jpg', caption: '和你在一起的每一天 💕' },
-    { src: 'images/photos/5cefaa7c735e633c8ed5e44d90eda67d.jpg', caption: '宝贝真好看 🌸' },
-    { src: 'images/photos/645333594c334da9e63dda1c426c3cd9.jpg', caption: '超喜欢这张～ ✨' },
-    { src: 'images/photos/78d382a4b093ede4e9594f8fde818fe6.jpg', caption: '最美的风景就是你 🏔️' },
-    { src: 'images/photos/898e868fa8cf34ee356e59537d915fab.jpg', caption: '一直一直在一起吧 💍' },
-    { src: 'images/photos/ac6f60e355620364a1122e8c197f3021.jpg', caption: '华仔最爱的宝贝 💝' },
-    { src: 'images/photos/d81b1ad144b1e88a4c89255fb1032c14.jpg', caption: '你就是我的小太阳 🌻' },
-    { src: 'images/photos/f5b76005becde58e24807b4217aede66.jpg', caption: '看多少次都觉得心动 💗' },
-    { src: 'images/flowers/tulip1.svg', caption: '送你一束郁金香 🌷' },
-    { src: 'images/flowers/tulip2.svg', caption: '花开的时候最想你 💐' },
-    { src: 'images/flowers/tulip3.svg', caption: '温柔如你，美丽如花 🌺' },
-    { src: 'images/dogs/golden.svg', caption: '金毛的微笑治愈一切 🐕' },
-    { src: 'images/dogs/westie.svg', caption: '像你一样可爱的小西高地 🐩' },
-  ],
-
-  init() {
-    const grid = document.getElementById('photoGrid');
-    this.items.forEach((item) => {
-      const card = document.createElement('div');
-      card.className = 'photo-card';
-      card.addEventListener('click', () => this.openPhoto(item.src));
-
-      const img = document.createElement('img');
-      img.src = item.src;
-      img.alt = item.caption;
-      img.loading = 'lazy';
-
-      const cap = document.createElement('div');
-      cap.className = 'photo-caption';
-      cap.textContent = item.caption;
-
-      card.appendChild(img);
-      card.appendChild(cap);
-      grid.appendChild(card);
-    });
-
-    document.getElementById('photoOverlay').addEventListener('click', function() {
-      this.classList.remove('active');
-    });
-  },
-
-  openPhoto(src) {
-    const overlay = document.getElementById('photoOverlay');
-    const img = document.getElementById('photoLarge');
-    img.src = src;
-    overlay.classList.add('active');
-  }
-};
-
-// ======================================================================
-//  暖心话语模块
-// ======================================================================
-WA.quotes = {
-  list: [
-    // 禅意风
-    '一念放下，万般自在 🍃',
-    '一切都刚刚好，不急不躁 🌿',
-    '放下烦忧，心生欢喜 ☀️',
-    '今天的不开心就到此为止吧 🌙',
-    '深呼吸，没有什么过不去的 ⛅',
-    '静心片刻，世界都温柔了 🧘‍♀️',
-    '万物皆有裂痕，那是光照进来的地方 ✨',
-    '慢慢来，比较快 🐢',
-    '心怀温柔，岁月静好 🌸',
-    '一花一世界，一笑一尘缘 🌺',
-    '生活明朗，万物可爱 🐣',
-    '风吹哪页读哪页，随心就好 📖',
-    '你已经做得很好了，真的 💪',
-    '累了就歇歇，没关系的 🛋️',
-    '心若向阳，无惧悲伤 🌻',
-    // 甜蜜风
-    '华仔永远是你的靠山 🏔️',
-    '宝贝，你是最棒的 🌟',
-    '今天也是被华仔宠爱的一天 💕',
-    '华仔的心里只有你一个人 💘',
-    '不管你变成什么样子我都喜欢 💗',
-    '宝贝辛苦了，华仔给你捏捏肩 💆‍♀️',
-    '你笑起来最好看了，多笑笑 😊',
-    '有我在，什么都不用怕 🦸‍♂️',
-    '华仔会一直一直陪着你 🤝',
-    '你是我最珍贵的宝藏 💎',
-    '宝贝说什么都是对的 👑',
-    '全世界最好的女朋友就是你 🏆',
-    '华仔的怀抱永远为你敞开 🫂',
-    '谢谢你来到我的生命里 🙏',
-    '每天醒来第一个想到的就是你 🌅',
-  ],
-
-  init() {
-    this.el = document.getElementById('quoteText');
-    this.card = document.getElementById('quoteCard');
-    this.showRandom();
-    this.card.addEventListener('click', () => this.nextQuote());
-  },
-
-  showRandom() {
-    let i = WA.store.get('quotes_index', -1);
-    if (i < 0 || i >= this.list.length) {
-      i = Math.floor(Math.random() * this.list.length);
-    }
-    this.currentIndex = i;
-    this.el.textContent = this.list[i];
-  },
-
-  nextQuote() {
-    this.el.classList.add('fade');
-    setTimeout(() => {
-      const next = (this.currentIndex + 1) % this.list.length;
-      this.currentIndex = next;
-      this.el.textContent = this.list[next];
-      WA.store.set('quotes_index', next);
-      this.el.classList.remove('fade');
-    }, 300);
-  }
-};
-
-// ======================================================================
-//  烦恼漂流瓶模块
-// ======================================================================
-WA.bottle = {
-  init() {
-    this.noteWrapper = document.getElementById('noteWrapper');
-    this.worryInput = document.getElementById('worryInput');
-    this.charCount = document.getElementById('charCount');
-    this.tossBtn = document.getElementById('tossBtn');
-    this.animStage = document.getElementById('bottleAnimStage');
-    this.animPaperNew = document.getElementById('animPaperNew');
-    this.animPaperInner = document.getElementById('animPaperInner');
-    this.bottleSail = document.getElementById('bottleSail');
-    this.bottleDone = document.getElementById('bottleDone');
-    this.resetBtn = document.getElementById('resetBtn');
-    this.historyList = document.getElementById('historyList');
-
-    // 字数统计
-    this.worryInput.addEventListener('input', () => {
-      this.charCount.textContent = this.worryInput.value.length;
-    });
-
-    // 提交按钮
-    this.tossBtn.addEventListener('click', () => {
-      const text = this.worryInput.value.trim();
-      if (!text) { WA.showToast('先写点什么吧～ ✍️'); return; }
-      this.startAnimation(text);
-    });
-
-    // 重置按钮
-    this.resetBtn.addEventListener('click', () => this.reset());
-
-    // 加载历史记录
-    this.renderHistory();
-  },
-
-  startAnimation(text) {
-    // 隐藏便签和按钮
-    this.noteWrapper.style.display = 'none';
-    this.tossBtn.style.display = 'none';
-    this.bottleDone.classList.remove('show');
-    this.bottleDone.style.display = 'none';
-
-    // 显示动画舞台
-    this.animStage.classList.add('running');
-
-    // 设置纸条内容
-    const shortText = text.length > 100 ? text.slice(0, 100) + '…' : text;
-    this.animPaperInner.textContent = shortText;
-    this.animPaperNew.classList.remove('rolling');
-    this.animPaperNew.style.clipPath = '';
-    this.animPaperNew.style.opacity = '1';
-    this.animPaperNew.style.transform = 'scale(1)';
-    this.animPaperNew.style.borderRadius = '3px';
-    this.bottleSail.classList.remove('nod', 'sailing');
-    this.bottleSail.style.opacity = '1';
-    this.bottleSail.style.transform = 'translateX(-50%)';
-
-    const section = document.querySelector('.bottle-section');
-    const rect = section.getBoundingClientRect();
-
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + 180;
-
-    // ====== 全新动画时间线 ======
-
-    // 阶段1: 纸条慢慢卷起来（2.8秒）
-    setTimeout(() => {
-      this.animPaperNew.classList.add('rolling');
-      this.playCrinkle();
-    }, 300);
-
-    // 阶段2: 纸条卷完消失后，瓶子接住（3.5s）
-    setTimeout(() => {
-      this.bottleSail.classList.add('nod');
-      WA.spawnParticles(cx, cy + 60, '✨', 5);
-    }, 3500);
-
-    // 阶段3: 瓶子开始漂向大海（4.3s）
-    setTimeout(() => {
-      this.bottleSail.classList.add('sailing');
-      WA.spawnParticles(cx + 60, cy + 80, '💧', 10);
-    }, 4300);
-
-    // 阶段4: 显示完成，保存历史（7.5s）
-    setTimeout(() => {
-      this.showDoneState(text);
-      this.saveHistory(text);
-      this.renderHistory();
-    }, 7500);
-
-    // 发送邮件通知
-    this.sendEmail(text);
-
-    // 清空输入框状态（下次打开不恢复）
-    WA.store.set('bottle_last', '');
-    WA.store.set('bottle_done', false);
-  },
-
-  saveHistory(text) {
-    const history = WA.store.get('bottle_history', []);
-    history.push({
-      text: text,
-      time: new Date().toISOString(),
-    });
-    // 最多保留 50 条
-    if (history.length > 50) history.shift();
-    WA.store.set('bottle_history', history);
-  },
-
-  renderHistory() {
-    const history = WA.store.get('bottle_history', []);
-    if (history.length === 0) {
-      this.historyList.innerHTML = '<div style="color:#C8B4A4;text-align:center;font-size:0.85rem;">还没有丢过烦恼哦～</div>';
-      return;
-    }
-    this.historyList.innerHTML = history.slice().reverse().map(h => {
-      const d = new Date(h.time);
-      const dateStr = d.getFullYear() + '.' + (d.getMonth() + 1) + '.' + d.getDate() + ' '
-        + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-      return `
-        <div class="history-item">
-          <div class="history-item-time">📅 ${dateStr}</div>
-          <div class="history-item-text">${this.escapeHtml(h.text)}</div>
-        </div>
-      `;
-    }).join('');
-  },
-
-  escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  },
-
-  sendEmail(text) {
-    try {
-      emailjs.send('service_5kb3qjr', 'template_qswaff3', {
-        message: text,
-        time: new Date().toLocaleString('zh-CN'),
-        from: '温暖小站漂流瓶',
-      });
-    } catch(e) {}
-  },
-
-  showDoneState(text) {
-    this.noteWrapper.style.display = 'none';
-    this.tossBtn.style.display = 'none';
-    this.animStage.classList.remove('running');
-    this.bottleDone.classList.add('show');
-    this.bottleDone.style.display = 'block';
-    WA.store.set('bottle_done', true);
-  },
-
-  reset() {
-    this.noteWrapper.style.display = 'block';
-    this.tossBtn.style.display = 'block';
-    this.animStage.classList.remove('running');
-    this.bottleDone.classList.remove('show');
-    this.bottleDone.style.display = 'none';
-    this.worryInput.value = '';
-    this.charCount.textContent = '0';
-    this.animPaperNew.classList.remove('rolling');
-    this.animPaperNew.style.clipPath = '';
-    this.animPaperNew.style.opacity = '1';
-    this.animPaperNew.style.transform = 'scale(1)';
-    this.bottleSail.classList.remove('nod', 'sailing');
-    this.bottleSail.style.opacity = '1';
-    WA.store.set('bottle_last', '');
-    WA.store.set('bottle_done', false);
-  },
-
-  playCrinkle() {
-    try {
-      const ctx = WA.muyu.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      if (ctx.state === 'suspended') ctx.resume();
-      const now = ctx.currentTime;
-      const bufferSize = ctx.sampleRate * 0.3;
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.05));
-      }
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.06, now);
-      source.connect(gain);
-      gain.connect(ctx.destination);
-      source.start(now);
-    } catch(_) {}
-  }
-};
-
-// ======================================================================
-//  管理面板模块
-// ======================================================================
-WA.admin = {
-  init() {
-    this.overlay = document.getElementById('adminOverlay');
-    this.body = document.getElementById('adminBody');
-    this.pwdOverlay = document.getElementById('pwdOverlay');
-    this.pwdInput = document.getElementById('pwdInput');
-
-    // 长按标题 3 秒
-    const title = document.getElementById('heroTitle');
-    let pressTimer;
-    const startPress = () => {
-      pressTimer = setTimeout(() => {
-        this.pwdInput.value = '';
-        this.pwdOverlay.classList.add('active');
-        this.pwdInput.focus();
-      }, 3000);
-    };
-    const cancelPress = () => clearTimeout(pressTimer);
-
-    title.addEventListener('pointerdown', startPress);
-    title.addEventListener('pointerup', cancelPress);
-    title.addEventListener('pointerleave', cancelPress);
-    title.addEventListener('pointercancel', cancelPress);
-    // 移动端用手指移动时取消（防止误触发）
-    title.addEventListener('touchmove', cancelPress);
-
-    document.getElementById('pwdConfirm').addEventListener('click', () => this.verify());
-    document.getElementById('pwdCancel').addEventListener('click', () => {
-      this.pwdOverlay.classList.remove('active');
-    });
-    this.pwdInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') this.verify();
-    });
-    document.getElementById('adminClose').addEventListener('click', () => {
-      this.overlay.classList.remove('active');
-    });
-  },
-
-  verify() {
-    if (this.pwdInput.value === WA.PASSWORD) {
-      this.pwdOverlay.classList.remove('active');
-      this.show();
-    } else {
-      WA.showToast('密码错误 ❌');
-      this.pwdInput.value = '';
-      this.pwdInput.focus();
-    }
-  },
-
-  show() {
-    const mc = WA.store.get('muyu_count', 0);
-    const mt = WA.store.get('muyu_total', 0);
-    const wc = WA.store.get('wheel_count', 0);
-    const records = WA.store.get('wheel_records', []);
-    const ms = WA.store.get('wheel_milestones', {});
-
-    const prizeCount = {};
-    records.forEach(r => { prizeCount[r.prize] = (prizeCount[r.prize] || 0) + 1; });
-
-    this.body.innerHTML = `
-      <div class="admin-section-title">📊 木鱼统计</div>
-      <div class="admin-stat"><span class="admin-stat-label">总敲击数</span><span class="admin-stat-value">${mc} 次</span></div>
-      <div class="admin-stat"><span class="admin-stat-label">累计金额</span><span class="admin-stat-value">¥${mt.toFixed(1)}</span></div>
-
-      <div class="admin-section-title">🎡 转盘统计</div>
-      <div class="admin-stat"><span class="admin-stat-label">总转动次数</span><span class="admin-stat-value">${wc} 次</span></div>
-      <div class="admin-stat"><span class="admin-stat-label">里程碑 · 请吃饭 (≈52次)</span><span class="admin-stat-value">${ms.m52 ? '✅ 已触发' : '⏳ 未触发 (' + wc + '/~52)'}</span></div>
-      <div class="admin-stat"><span class="admin-stat-label">里程碑 · Jellycat (≈520次)</span><span class="admin-stat-value">${ms.m520 ? '✅ 已触发' : '⏳ 未触发 (' + wc + '/~520)'}</span></div>
-      <div class="admin-stat"><span class="admin-stat-label">里程碑 · 戒指/包包 (≈1314次)</span><span class="admin-stat-value">${ms.m1314 ? '✅ 已触发' : '⏳ 未触发 (' + wc + '/~1314)'}</span></div>
-
-      <div class="admin-section-title">🏆 各奖品中奖次数</div>
-      ${WA.wheel.prizes.map(p => `
-        <div class="admin-stat"><span class="admin-stat-label">${p.icon} ${p.name}</span><span class="admin-stat-value">${prizeCount[p.name] || 0} 次</span></div>
-      `).join('')}
-
-      <div class="admin-section-title">📋 最近中奖记录</div>
-      <div class="admin-records">
-        ${records.slice().reverse().slice(0, 50).map(r => `
-          <div class="admin-record">
-            <span class="admin-record-prize">${r.icon} ${r.prize}</span>
-            <span>${new Date(r.time).toLocaleString('zh-CN', {month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span>
-          </div>
-        `).join('') || '<div style="color:#A0897B;text-align:center;padding:12px;">暂无记录</div>'}
-      </div>
-
-      <button class="admin-btn admin-btn-info" id="adminRefresh">🔄 刷新数据</button>
-      <button class="admin-btn admin-btn-danger" id="adminReset">⚠️ 重置所有数据</button>
-    `;
-
-    document.getElementById('adminRefresh').addEventListener('click', () => this.show());
-
-    document.getElementById('adminReset').addEventListener('click', () => {
-      if (confirm('确定要重置所有数据吗？此操作不可恢复！')) {
-        if (confirm('再次确认：真的要清除所有木鱼金额和转盘记录吗？')) {
-          ['muyu_count','muyu_total','wheel_count','wheel_records','wheel_milestones','quotes_index'].forEach(k => {
-            WA.store.set(k, k === 'wheel_milestones' ? { m52: false, m520: false, m1314: false } : (k === 'wheel_records' ? [] : 0));
-          });
-          WA.muyu.count = 0;
-          WA.muyu.total = 0;
-          WA.muyu.updateDisplay();
-          WA.wheel.count = 0;
-          WA.wheel.records = [];
-          WA.wheel.milestones = { m52: false, m520: false, m1314: false };
-          WA.wheel.updateCounter();
-          this.show();
-          WA.showToast('数据已重置 ✅');
-        }
-      }
-    });
-
-    this.overlay.classList.add('active');
-  }
-};
-
-// ======================================================================
-//  启动
-// ======================================================================
-// 初始化 EmailJS
-(function initEmailJS() {
-  try {
-    emailjs.init('6XUHk-s379gqqS7dP');
-  } catch(e) {}
 })();
 
-WA.init();
-WA.startPetals();
-WA.muyu.init();
-WA.wheel.init();
-WA.photos.init();
-WA.quotes.init();
-WA.bottle.init();
-WA.admin.init();
-</script>
+// ======================================================================
+//  WHEEL ENGINE
+// ======================================================================
+(function initWheel() {
+  const prizes = [
+    { name:'谢谢惠顾',icon:'😅',prob:0.42,level:0 },
+    { name:'华仔亲亲',icon:'😘',prob:0.25,level:0 },
+    { name:'爱的抱抱',icon:'🫂',prob:0.16,level:0 },
+    { name:'请喝奶茶',icon:'🧋',prob:0.09,level:1 },
+    { name:'请吃饭',icon:'🍽️',prob:0.04,level:2 },
+    { name:'买束花花',icon:'💐',prob:0.025,level:2 },
+    { name:'买Jellycat',icon:'🧸',prob:0.01,level:3 },
+    { name:'买包包/戒指',icon:'💍',prob:0.005,level:3 },
+  ];
+  const colors = ['#FFE6DA','#FFF7F0','#FFE0D0','#FFFBF7','#FFECD8','#FFF4EC','#FFE2CE','#FFFAF6'];
+  let spinning = false, curAngle = 0;
+  let count = W.store.get('wheel_count', 0);
+  let records = W.store.get('wheel_records', []);
+  let ms = W.store.get('wheel_milestones', {});
+  const canvas = document.getElementById('wheelCanvas');
+  const ctx = canvas.getContext('2d');
+  const btn = document.getElementById('wheelBtn');
+  const counter = document.getElementById('wheelCounter');
+  counter.textContent = '已转 ' + count + ' 次';
 
+  function draw(angle) {
+    const a = angle || 0, cx = 140, cy = 140, r = 130;
+    ctx.clearRect(0, 0, 280, 280);
+    ctx.beginPath(); ctx.arc(cx, cy, r+3, 0, 2*Math.PI); ctx.fillStyle='rgba(139,111,94,0.12)'; ctx.fill();
+    const sa = 2*Math.PI/prizes.length;
+    for (let i = 0; i < prizes.length; i++) {
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, i*sa+a, (i+1)*sa+a); ctx.closePath();
+      ctx.fillStyle = colors[i]; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(i*sa+a+sa/2);
+      ctx.textAlign='center'; ctx.fillStyle='#4A3728';
+      ctx.font='bold 15px sans-serif'; ctx.fillText(prizes[i].icon, r*0.6, 4);
+      ctx.font='10px sans-serif'; ctx.fillText(prizes[i].name, r*0.6, 20);
+      ctx.restore();
+    }
+    ctx.beginPath(); ctx.arc(cx, cy, 34, 0, 2*Math.PI);
+    const cg = ctx.createRadialGradient(cx, cy, 3, cx, cy, 34);
+    cg.addColorStop(0,'#FFFBF7'); cg.addColorStop(1,'#F0E6D8'); ctx.fillStyle=cg; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=3; ctx.stroke();
+  }
+  draw(0);
+
+  function adjustProbs() {
+    const p = prizes.map(x => ({...x}));
+    const c = count;
+    if (!ms.m52 && c >= 45) { const b = Math.min(0.4, 0.04+(c-45)*0.07); p[4].prob=b; p[0].prob=Math.max(0.05,p[0].prob-(b-0.04)); }
+    if (!ms.m520 && c >= 500) { const b = Math.min(0.3, 0.025+(c-500)*0.018); p[6].prob=b; p[0].prob=Math.max(0.05,p[0].prob-(b-0.025)); }
+    if (!ms.m1314 && c >= 1290) { const b = Math.min(0.25, 0.005+(c-1290)*0.015); p[7].prob=b; p[0].prob=Math.max(0.05,p[0].prob-(b-0.005)); }
+    return p;
+  }
+
+  function pick() {
+    const ap = adjustProbs(); let r = Math.random();
+    for (let i = 0; i < ap.length; i++) { r -= ap[i].prob; if (r <= 0) return {idx:i, pr:ap[i]}; }
+    return {idx:0, pr:ap[0]};
+  }
+
+  btn.addEventListener('click', () => {
+    if (spinning) return;
+    spinning = true; btn.disabled = true; count++; W.store.set('wheel_count', count);
+    const {idx, pr} = pick();
+    const slice = 360/prizes.length;
+    const targetCenter = idx*slice + slice/2;
+    const extra = 4+Math.floor(Math.random()*3);
+    const totalDeg = extra*360 + ((270-targetCenter) - ((curAngle%360)+360)%360);
+    const startA = curAngle;
+    const duration = 3800+Math.random()*1200;
+    const t0 = performance.now();
+
+    function anim(now) {
+      const p = Math.min((now-t0)/duration, 1);
+      const e = 1-Math.pow(1-p, 3);
+      curAngle = startA + totalDeg*e;
+      draw(curAngle*Math.PI/180);
+      if (p<1) requestAnimationFrame(anim);
+      else {
+        curAngle = startA+totalDeg; draw(curAngle*Math.PI/180);
+        counter.textContent = '已转 '+count+' 次';
+        onResult(pr);
+      }
+    }
+    requestAnimationFrame(anim);
+  });
+
+  function onResult(pr) {
+    records.push({time:new Date().toISOString(), prize:pr.name, icon:pr.icon, level:pr.level});
+    W.store.set('wheel_records', records);
+    if (pr.level>=1 && !ms.m52 && count>=45) { ms.m52=true; W.store.set('wheel_milestones', ms); }
+    if (pr.level>=2 && !ms.m520 && count>=500) { ms.m520=true; W.store.set('wheel_milestones', ms); }
+    if (pr.level>=3 && !ms.m1314 && count>=1290) { ms.m1314=true; W.store.set('wheel_milestones', ms); }
+
+    // create voucher for level >= 1 prizes
+    if (pr.level >= 1) {
+      const vouchers = W.store.get('vouchers', []);
+      vouchers.push({prize:pr.name, icon:pr.icon, time:new Date().toISOString(), used:false});
+      W.store.set('vouchers', vouchers);
+    }
+
+    showResultModal(pr);
+    if (pr.level>=2) setTimeout(() => { W.spawn(window.innerWidth/2, window.innerHeight/2, '🎉', 20); }, 400);
+
+    setTimeout(() => { if (!document.getElementById('wheelResultModal').classList.contains('active')) { spinning=false; btn.disabled=false; } }, 400);
+  }
+
+  function showResultModal(pr) {
+    const msg = pr.level>=3?'💎 超级大奖！！':pr.level>=2?'🎊 恭喜！大奖来啦！':pr.level>=1?'🎫 已加入券包！':'下次会更好～';
+    document.getElementById('wheelResultContent').innerHTML = `<div style="font-size:3rem;margin-bottom:6px">${pr.icon}</div><div style="font-size:1.3rem;font-weight:700;color:#4A3728">${pr.name}</div><div style="color:#A0897B;font-size:0.82rem;margin-top:6px">${msg}${pr.level>=1?'<br><span style="color:#E8486B;font-size:0.72rem">去「券包」查看，可兑换红包 💰</span>':''}</div>`;
+    document.getElementById('wheelResultModal').classList.add('active');
+    document.getElementById('wheelResultClose').onclick = () => {
+      document.getElementById('wheelResultModal').classList.remove('active'); spinning=false; btn.disabled=false;
+    };
+  }
+})();
+
+// ======================================================================
+//  VOUCHERS RENDER
+// ======================================================================
+function renderVouchers() {
+  const list = document.getElementById('voucherList');
+  const vouchers = W.store.get('vouchers', []);
+  if (!vouchers.length) { list.innerHTML = '<div class="voucher-empty">还没有兑换券哦～去转转盘吧 🎡</div>'; return; }
+  list.innerHTML = vouchers.map((v, i) => `
+    <div class="voucher-card">
+      <div class="voucher-icon">${v.icon}</div>
+      <div class="voucher-info">
+        <div class="voucher-name">${v.prize}</div>
+        <div class="voucher-time">📅 ${W.fmtDate(v.time)}</div>
+        <div class="voucher-detail">💰 凭此券可找华仔兑换对应红包 / 实物 | 兑换时间随时</div>
+      </div>
+    </div>
+  `).reverse().join('');
+}
+
+// ======================================================================
+//  BOTTLE ENGINE
+// ======================================================================
+(function initBottle() {
+  const worryInput = document.getElementById('worryInput');
+  const charCount = document.getElementById('charCount');
+  const tossBtn = document.getElementById('tossBtn');
+  const floatingBottles = document.getElementById('floatingBottles');
+  const bottleHistoryList = document.getElementById('bottleHistoryList');
+
+  worryInput.addEventListener('input', () => { charCount.textContent = worryInput.value.length; });
+
+  function renderFloatingBottles() {
+    const history = W.store.get('bottle_history', []);
+    const replies = W.store.get('bottle_replies', {});
+    if (!history.length) { floatingBottles.innerHTML = '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,0.5);font-size:0.85rem">海上还没有漂流瓶...</div>'; return; }
+    const recent = history.slice(-4);
+    floatingBottles.innerHTML = recent.map((h, i) => `
+      <div class="float-bottle" data-id="${h.id}" onclick="openBottle('${h.id}')" style="left:${10+i*22}%">
+        <div class="float-bottle-label">${W.fmtDateShort(h.time)}${replies[h.id]?' 💌':''}</div>
+        🍾
+      </div>
+    `).join('');
+  }
+
+  function renderHistoryTags() {
+    const history = W.store.get('bottle_history', []);
+    const replies = W.store.get('bottle_replies', {});
+    if (!history.length) { bottleHistoryList.innerHTML = '<div class="voucher-empty">还没有丢过烦恼哦～</div>'; return; }
+    bottleHistoryList.innerHTML = history.slice().reverse().map(h => `
+      <div class="bottle-tag${replies[h.id]?' has-reply':''}" onclick="openBottle('${h.id}')">
+        🍾 ${W.fmtDateShort(h.time)}${replies[h.id]?' <span class="reply-badge"></span>':''}
+      </div>
+    `).join('');
+  }
+
+  tossBtn.addEventListener('click', () => {
+    const text = worryInput.value.trim();
+    if (!text) { W.toast('先写点什么吧～ ✍️'); return; }
+    // Play toss animation then save
+    const scene = document.getElementById('bottleScene');
+    const r = scene.getBoundingClientRect();
+    W.spawn(r.left+r.width/2, r.top+r.height*0.3, '📜', 8);
+
+    setTimeout(() => {
+      W.spawn(r.left+r.width/2, r.top+r.height*0.6, '💧', 10);
+      W.spawn(r.left+r.width*0.7, r.top+r.height*0.5, '✨', 5);
+    }, 1500);
+
+    setTimeout(() => {
+      const id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+      const history = W.store.get('bottle_history', []);
+      history.push({id, text, time: new Date().toISOString()});
+      if (history.length > 50) history.shift();
+      W.store.set('bottle_history', history);
+
+      // send email
+      try { emailjs.send('service_5kb3qjr', 'template_qswaff3', { message: text, time: new Date().toLocaleString('zh-CN'), from: '温暖小站漂流瓶', bottle_id: id }); } catch(_) {}
+
+      worryInput.value = ''; charCount.textContent = '0';
+      renderFloatingBottles(); renderHistoryTags();
+      W.toast('烦恼已丢进大海 🌊');
+
+      // Ask if she wants huazi's reply
+      setTimeout(() => {
+        document.getElementById('feedbackModal').classList.add('active');
+        document.getElementById('feedbackYes').onclick = () => {
+          document.getElementById('feedbackModal').classList.remove('active');
+          // send another email requesting reply
+          try { emailjs.send('service_5kb3qjr', 'template_qswaff3', { message: '【需要华仔回复！】\n瓶ID: '+id+'\n烦恼: '+text, time: new Date().toLocaleString('zh-CN'), from: '🔥 需要回复的漂流瓶', bottle_id: id }); } catch(_) {}
+          W.toast('华仔会看到并回复你的 💌');
+        };
+        document.getElementById('feedbackNo').onclick = () => {
+          document.getElementById('feedbackModal').classList.remove('active');
+          W.toast('好的，烦恼已经远去 🌊');
+        };
+      }, 2500);
+    }, 2000);
+  });
+
+  renderFloatingBottles();
+  renderHistoryTags();
+})();
+
+// ======================================================================
+//  (in REPLIES CONFIG) — this file gets updated when huazi replies
+//  Path: replies.json
+//  Format: { "bottle_id": { "reply": "回复文字", "time": "ISO" }, ... }
+// ======================================================================
+
+// ======================================================================
+//  OPEN BOTTLE (letter)
+// ======================================================================
+window.openBottle = function(id) {
+  const history = W.store.get('bottle_history', []);
+  const replies = W.store.get('bottle_replies', {});
+  const found = history.find(h => h.id === id);
+  if (!found) return;
+  const reply = replies[id];
+  document.getElementById('letterContent').innerHTML = `
+    <div class="letter-paper">
+      <div class="letter-date">📅 ${W.fmtDate(found.time)}</div>
+      <div class="letter-body">${found.text}</div>
+      ${reply ? `<div class="letter-reply"><div class="letter-reply-label">💌 华仔的回复：</div><div>${reply.reply}</div><div style="font-size:0.7rem;color:#B8A090;margin-top:4px">${W.fmtDate(reply.time)}</div></div>` : '<div style="color:#C8B4A4;text-align:center;font-size:0.82rem;margin-top:12px">等待华仔回复中...</div>'}
+    </div>
+  `;
+  document.getElementById('letterModal').classList.add('active');
+  document.getElementById('letterClose').onclick = () => document.getElementById('letterModal').classList.remove('active');
+};
+
+// ======================================================================
+//  FETCH REPLIES from replies.json (auto-update every 5 min)
+// ======================================================================
+(function initReplies() {
+  function fetchReplies() {
+    fetch('replies.json?t='+Date.now())
+      .then(r => r.json())
+      .then(data => {
+        if (data && Object.keys(data).length > 0) {
+          W.store.set('bottle_replies', data);
+          // re-render if on bottle page
+          try { initBottleReRender(); } catch(_) {}
+        }
+      }).catch(() => {});
+  }
+  fetchReplies();
+  setInterval(fetchReplies, 300000); // every 5 min
+
+  // Also check for stored replies
+  const stored = W.store.get('bottle_replies', {});
+  if (Object.keys(stored).length > 0) {
+    // already have replies cached
+  }
+})();
+
+function initBottleReRender() {
+  // re-render floating bottles and history tags
+  const history = W.store.get('bottle_history', []);
+  const replies = W.store.get('bottle_replies', {});
+  const floatingBottles = document.getElementById('floatingBottles');
+  const bottleHistoryList = document.getElementById('bottleHistoryList');
+  if (!floatingBottles || !bottleHistoryList) return;
+
+  if (!history.length) {
+    floatingBottles.innerHTML = '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,0.5);font-size:0.85rem">海上还没有漂流瓶...</div>';
+    bottleHistoryList.innerHTML = '<div class="voucher-empty">还没有丢过烦恼哦～</div>';
+    return;
+  }
+  const recent = history.slice(-4);
+  floatingBottles.innerHTML = recent.map((h, i) => `
+    <div class="float-bottle" data-id="${h.id}" onclick="openBottle('${h.id}')" style="left:${10+i*22}%">
+      <div class="float-bottle-label">${W.fmtDateShort(h.time)}${replies[h.id]?' 💌':''}</div>
+      🍾
+    </div>
+  `).join('');
+
+  bottleHistoryList.innerHTML = history.slice().reverse().map(h => `
+    <div class="bottle-tag${replies[h.id]?' has-reply':''}" onclick="openBottle('${h.id}')">
+      🍾 ${W.fmtDateShort(h.time)}${replies[h.id]?' <span class="reply-badge"></span>':''}
+    </div>
+  `).join('');
+}
+
+// ======================================================================
+//  QUOTES
+// ======================================================================
+(function initQuotes() {
+  const list = [
+    '一念放下，万般自在 🍃','一切都刚刚好，不急不躁 🌿','放下烦忧，心生欢喜 ☀️','今天的不开心就到此为止吧 🌙','深呼吸，没有什么过不去的 ⛅','静心片刻，世界都温柔了 🧘‍♀️','万物皆有裂痕，那是光照进来的地方 ✨','心怀温柔，岁月静好 🌸','生活明朗，万物可爱 🐣','你已经做得很好了，真的 💪','累了就歇歇，没关系的 🛋️','心若向阳，无惧悲伤 🌻',
+    '华仔永远是你的靠山 🏔️','宝贝，你是最棒的 🌟','今天也是被华仔宠爱的一天 💕','华仔的心里只有你一个人 💘','不管你变成什么样子我都喜欢 💗','宝贝辛苦了，华仔给你捏捏肩 💆‍♀️','你笑起来最好看了，多笑笑 😊','有我在，什么都不用怕 🦸‍♂️','华仔会一直一直陪着你 🤝','你是我最珍贵的宝藏 💎','全世界最好的女朋友就是你 🏆','华仔的怀抱永远为你敞开 🫂','谢谢你来到我的生命里 🙏','每天醒来第一个想到的就是你 🌅',
+  ];
+  const el = document.getElementById('quoteText');
+  let idx = W.store.get('quotes_index', Math.floor(Math.random()*list.length));
+  el.textContent = list[idx];
+  document.getElementById('quoteCard').addEventListener('click', () => {
+    el.classList.add('fade');
+    setTimeout(() => { idx=(idx+1)%list.length; el.textContent=list[idx]; W.store.set('quotes_index',idx); el.classList.remove('fade'); }, 300);
+  });
+})();
+
+// ======================================================================
+//  PHOTOS
+// ======================================================================
+(function initPhotos() {
+  const items = [
+    'images/photos/4f04958f420a5e60cf6f3616ea59957a.jpg','images/photos/53ebeacc4aa5dbfb59dc553878fce3b3.jpg','images/photos/5cefaa7c735e633c8ed5e44d90eda67d.jpg','images/photos/645333594c334da9e63dda1c426c3cd9.jpg','images/photos/78d382a4b093ede4e9594f8fde818fe6.jpg','images/photos/898e868fa8cf34ee356e59537d915fab.jpg','images/photos/ac6f60e355620364a1122e8c197f3021.jpg','images/photos/d81b1ad144b1e88a4c89255fb1032c14.jpg','images/photos/f5b76005becde58e24807b4217aede66.jpg','images/flowers/tulip1.svg','images/flowers/tulip2.svg','images/flowers/tulip3.svg','images/dogs/golden.svg','images/dogs/westie.svg',
+  ];
+  const mini = document.getElementById('photoMini');
+  items.forEach(src => {
+    const img = document.createElement('img'); img.src=src; img.loading='lazy';
+    img.addEventListener('click', () => { document.getElementById('photoLarge').src=src; document.getElementById('photoModal').classList.add('active'); });
+    mini.appendChild(img);
+  });
+  document.getElementById('photoModal').addEventListener('click', function(){this.classList.remove('active')});
+})();
+
+// ======================================================================
+//  ADMIN
+// ======================================================================
+(function initAdmin() {
+  const title = document.getElementById('heroTitle');
+  let timer;
+  title.addEventListener('pointerdown', () => { timer = setTimeout(() => { document.getElementById('pwdInput').value=''; document.getElementById('pwdOverlay').classList.add('active'); }, 3000); });
+  title.addEventListener('pointerup', () => clearTimeout(timer));
+  title.addEventListener('pointerleave', () => clearTimeout(timer));
+  title.addEventListener('touchmove', () => clearTimeout(timer));
+
+  document.getElementById('pwdConfirm').addEventListener('click', verify);
+  document.getElementById('pwdCancel').addEventListener('click', () => document.getElementById('pwdOverlay').classList.remove('active'));
+  document.getElementById('pwdInput').addEventListener('keydown', e => { if(e.key==='Enter') verify(); });
+  document.getElementById('adminClose').addEventListener('click', () => document.getElementById('adminOverlay').classList.remove('active'));
+
+  function verify() {
+    if (document.getElementById('pwdInput').value === W.PWD) {
+      document.getElementById('pwdOverlay').classList.remove('active'); show();
+    } else { W.toast('密码错误 ❌'); document.getElementById('pwdInput').value=''; }
+  }
+
+  function show() {
+    const mc=W.store.get('muyu_count',0), mt=W.store.get('muyu_total',0), wc=W.store.get('wheel_count',0);
+    const records=W.store.get('wheel_records',[]), ms=W.store.get('wheel_milestones',{});
+    const pc={}; records.forEach(r=>{pc[r.prize]=(pc[r.prize]||0)+1;});
+    const body=document.getElementById('adminBody');
+    body.innerHTML=`
+      <div class="admin-title">📊 木鱼统计</div>
+      <div class="admin-stat"><span class="admin-stat-label">总敲击</span><span class="admin-stat-value">${mc} 次</span></div>
+      <div class="admin-stat"><span class="admin-stat-label">累计金额</span><span class="admin-stat-value">¥${mt.toFixed(1)}</span></div>
+      <div class="admin-title">🎡 转盘统计</div>
+      <div class="admin-stat"><span class="admin-stat-label">总转动</span><span class="admin-stat-value">${wc} 次</span></div>
+      <div class="admin-stat"><span class="admin-stat-label">吃饭里程碑(~52)</span><span class="admin-stat-value">${ms.m52?'✅已触发':'⏳未触发('+wc+'/~52)'}</span></div>
+      <div class="admin-stat"><span class="admin-stat-label">Jellycat(~520)</span><span class="admin-stat-value">${ms.m520?'✅已触发':'⏳未触发('+wc+'/~520)'}</span></div>
+      <div class="admin-stat"><span class="admin-stat-label">戒指/包包(~1314)</span><span class="admin-stat-value">${ms.m1314?'✅已触发':'⏳未触发('+wc+'/~1314)'}</span></div>
+      <div class="admin-title">🏆 中奖统计</div>
+      ${[{name:'谢谢惠顾',icon:'😅'},{name:'华仔亲亲',icon:'😘'},{name:'爱的抱抱',icon:'🫂'},{name:'请喝奶茶',icon:'🧋'},{name:'请吃饭',icon:'🍽️'},{name:'买束花花',icon:'💐'},{name:'买Jellycat',icon:'🧸'},{name:'买包包/戒指',icon:'💍'}].map(p=>`<div class="admin-stat"><span class="admin-stat-label">${p.icon} ${p.name}</span><span class="admin-stat-value">${pc[p.name]||0} 次</span></div>`).join('')}
+      <div class="admin-title">📋 最近记录</div>
+      <div style="max-height:200px;overflow-y:auto;font-size:0.8rem">${records.slice().reverse().slice(0,50).map(r=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F5E6D3"><span style="color:var(--brown);font-weight:500">${r.icon} ${r.prize}</span><span style="color:#A0897B">${W.fmtDate(r.time)}</span></div>`).join('')||'<div style="color:#A0897B;text-align:center;padding:10px">暂无</div>'}</div>
+      <button class="admin-btn admin-btn-info" id="adminRefresh">🔄 刷新</button>
+      <button class="admin-btn admin-btn-info" id="adminEmail" style="margin-top:4px">📧 发送统计邮件</button>
+      <button class="admin-btn admin-btn-danger" id="adminReset">⚠️ 重置所有数据</button>
+    `;
+    document.getElementById('adminRefresh').onclick=show;
+    document.getElementById('adminEmail').onclick=()=>{
+      try { emailjs.send('service_5kb3qjr','template_qswaff3',{message:`📊 每日统计\n\n🪵 木鱼: ${mc}次, ¥${mt.toFixed(1)}\n🎡 转盘: ${wc}次\n\n中奖明细:\n${Object.entries(pc).map(([k,v])=>k+': '+v+'次').join('\n')}\n\n华仔查看时间: ${new Date().toLocaleString('zh-CN')}`,time:new Date().toLocaleString('zh-CN'),from:'📊 每日统计报告'}); } catch(_) {}
+      W.toast('统计邮件已发送 📧');
+    };
+    document.getElementById('adminReset').onclick=()=>{
+      if(confirm('确定重置所有数据？')){if(confirm('再次确认？')){['muyu_count','muyu_total','wheel_count','wheel_records','wheel_milestones','vouchers','bottle_history','bottle_replies','quotes_index'].forEach(k=>{const d={wheel_milestones:{m52:false,m520:false,m1314:false},wheel_records:[],vouchers:[],bottle_history:[],bottle_replies:{}};W.store.set(k,d[k]!==undefined?d[k]:0);});show();location.reload();}}
+    };
+    document.getElementById('adminOverlay').classList.add('active');
+  }
+})();
+
+// ======================================================================
+//  DAILY STATS AUTO-SEND (once per day when page opens)
+// ======================================================================
+(function initDailyStats() {
+  const lastSent = W.store.get('last_stats_sent_date', '');
+  const today = new Date().toISOString().slice(0, 10);
+  if (lastSent !== today) {
+    // Try to send daily stats on first open of the day
+    setTimeout(() => {
+      const mc=W.store.get('muyu_count',0), mt=W.store.get('muyu_total',0), wc=W.store.get('wheel_count',0);
+      const records=W.store.get('wheel_records',[]);
+      const pc={}; records.forEach(r=>{pc[r.prize]=(pc[r.prize]||0)+1;});
+      try {
+        emailjs.send('service_5kb3qjr','template_qswaff3',{
+          message: `📊 每日自动统计 [${today}]\n\n🪵 木鱼敲击: ${mc} 次\n💰 累计金额: ¥${mt.toFixed(1)}\n🎡 转盘: ${wc} 次\n\n🏆 中奖明细:\n${Object.entries(pc).map(([k,v])=>k+': '+v+'次').join('\n')}`,
+          time: new Date().toLocaleString('zh-CN'),
+          from: '📊 每日自动统计'
+        });
+        W.store.set('last_stats_sent_date', today);
+      } catch(_) {}
+    }, 5000); // delay 5s to load all data
+  }
+})();
+
+// ======================================================================
+//  INIT
+// ======================================================================
+W.init();
+try { emailjs.init('6XUHk-s379gqqS7dP'); } catch(_) {}
+renderVouchers();
+</script>
 </body>
 </html>
